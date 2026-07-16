@@ -28,50 +28,132 @@ function Install-OpenCode {
     $version = (& opencode --version 2>$null)
     if ($LASTEXITCODE -eq 0) {
         Write-Host "OpenCode ya está instalado: $version" -ForegroundColor Green
-        return
+        return $true
     }
 
     Write-Host 'Instalando OpenCode mediante npm...' -ForegroundColor Cyan
     sudo npm install -g opencode-ai
     if ($LASTEXITCODE -eq 0) {
-        Write-Host 'OpenCode instalado. Ejecuta: OpenCode-Start' -ForegroundColor Green
-    } else {
-        Write-Host 'No se pudo instalar OpenCode. Revisa la conexión.' -ForegroundColor Red
+        Write-Host 'OpenCode instalado correctamente.' -ForegroundColor Green
+        return $true
     }
+
+    Write-Host 'No se pudo instalar OpenCode. Revisa la conexión.' -ForegroundColor Red
+    return $false
+}
+
+function OpenCode-AuthFile {
+    return (Join-Path $HOME '.local/share/opencode/auth.json')
 }
 
 function OpenCode-Status {
-    Write-Host 'Proveedores conectados en esta mini PC:' -ForegroundColor Cyan
-    opencode auth list
+    Write-Host ''
+    Write-Host '=== ANDER OpenCode Status ===' -ForegroundColor Cyan
+    $version = (& opencode --version 2>$null)
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "Versión: $version" -ForegroundColor Green
+    } else {
+        Write-Host 'OpenCode no está instalado.' -ForegroundColor Red
+        return
+    }
+
+    $authFile = OpenCode-AuthFile
+    Write-Host "Credenciales: $authFile" -ForegroundColor DarkGray
+    if (Test-Path $authFile) {
+        Write-Host 'Archivo de credenciales encontrado y persistente.' -ForegroundColor Green
+    } else {
+        Write-Host 'No hay proveedor conectado en esta mini PC.' -ForegroundColor Yellow
+    }
+
+    Write-Host ''
+    Write-Host 'Proveedores conectados:' -ForegroundColor Cyan
+    & opencode auth list
 }
 
 function Connect-OpenCode {
+    if (-not (Install-OpenCode)) { return }
+
     Write-Host ''
-    Write-Host 'Conecta OpenCode con tu cuenta de GitHub Copilot:' -ForegroundColor Cyan
-    Write-Host '1. En el selector elige GitHub Copilot.' -ForegroundColor Gray
-    Write-Host '2. OpenCode mostrará una dirección y un código.' -ForegroundColor Gray
-    Write-Host '3. Abre la dirección en el teléfono, inicia sesión y autoriza.' -ForegroundColor Gray
-    Write-Host '4. Después abre OpenCode y usa /models para elegir un modelo de Copilot.' -ForegroundColor Gray
+    Write-Host 'Conectando GitHub Copilot con OpenCode...' -ForegroundColor Cyan
+    Write-Host 'OpenCode mostrará github.com/login/device y un código.' -ForegroundColor Gray
+    Write-Host 'Abre esa dirección en el teléfono y autoriza tu cuenta.' -ForegroundColor Gray
     Write-Host ''
-    opencode auth login
+
+    & opencode auth login --provider github-copilot
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host 'No se pudo abrir GitHub Copilot directamente. Abriendo el selector general...' -ForegroundColor Yellow
+        & opencode auth login
+    }
+
+    Write-Host ''
+    OpenCode-Status
+    Write-Host 'Después ejecuta OpenCode-Ready y dentro usa /models.' -ForegroundColor Green
+}
+
+function OpenCode-Doctor {
+    if (-not (Install-OpenCode)) { return }
+    OpenCode-Status
+
+    $logDir = Join-Path $HOME '.local/share/opencode/log'
+    if (Test-Path $logDir) {
+        $latest = Get-ChildItem $logDir -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+        if ($latest) {
+            Write-Host ''
+            Write-Host "Último log: $($latest.FullName)" -ForegroundColor Cyan
+            Get-Content $latest.FullName -Tail 25
+        }
+    }
+
+    Write-Host ''
+    Write-Host 'Nota: Big Pickle y otros modelos Free tienen cuota temporal.' -ForegroundColor Yellow
+    Write-Host 'La cuenta de tu laptop real no se copia automáticamente a este contenedor.' -ForegroundColor Yellow
+    Write-Host 'Para usar Copilot aquí ejecuta: Connect-OpenCode' -ForegroundColor Green
+}
+
+function OpenCode-Ready {
+    if (-not (Install-OpenCode)) { return }
+
+    $authFile = OpenCode-AuthFile
+    if (-not (Test-Path $authFile)) {
+        Write-Host 'Esta mini PC todavía no tiene la sesión de tu laptop.' -ForegroundColor Yellow
+        Write-Host 'Iniciando conexión con GitHub Copilot...' -ForegroundColor Cyan
+        Connect-OpenCode
+        if (-not (Test-Path $authFile)) { return }
+    }
+
+    Set-Location /workspace
+    & opencode
 }
 
 function OpenCode-Start {
     Set-Location /workspace
-    opencode
+    & opencode
 }
 
-function OpenCode-Repair {
-    Write-Host 'Comprobando instalación y proveedores...' -ForegroundColor Cyan
-    Install-OpenCode
-    OpenCode-Status
-    Write-Host ''
-    Write-Host 'Si no aparece GitHub Copilot, ejecuta: Connect-OpenCode' -ForegroundColor Yellow
+function Import-OpenCodeAuth {
+    $source = '/workspace/opencode-auth.json'
+    $target = OpenCode-AuthFile
+    if (-not (Test-Path $source)) {
+        Write-Host 'No existe /workspace/opencode-auth.json' -ForegroundColor Red
+        return
+    }
+
+    try {
+        Get-Content $source -Raw | ConvertFrom-Json | Out-Null
+        New-Item -ItemType Directory -Force -Path (Split-Path $target) | Out-Null
+        Copy-Item $source $target -Force
+        chmod 600 $target
+        Write-Host 'Credenciales importadas. Borra el archivo temporal de /workspace.' -ForegroundColor Green
+    } catch {
+        Write-Host 'El archivo no contiene JSON válido.' -ForegroundColor Red
+    }
 }
 
-Set-Alias oc OpenCode-Start
+Set-Alias oc OpenCode-Ready
+Set-Alias oc-start OpenCode-Start
 Set-Alias oc-connect Connect-OpenCode
 Set-Alias oc-status OpenCode-Status
+Set-Alias oc-doctor OpenCode-Doctor
 
 Clear-Host
 Write-Host 'ANDER PowerShell 7' -ForegroundColor Cyan
@@ -79,12 +161,12 @@ Write-Host 'Workspace compartido: /workspace' -ForegroundColor DarkGray
 Write-Host 'OpenCode, Node.js, npm, Python, Git, curl y sudo están disponibles.' -ForegroundColor DarkGray
 Write-Host 'Tab autocompleta · Shift+Tab retrocede · Esc cancela o regresa.' -ForegroundColor DarkGray
 Write-Host ''
-Write-Host 'OpenCode-Start   ' -NoNewline -ForegroundColor Green
-Write-Host 'Abrir OpenCode'
-Write-Host 'Connect-OpenCode' -NoNewline -ForegroundColor Green
-Write-Host ' Conectar GitHub Copilot sin pegar API'
-Write-Host 'OpenCode-Status  ' -NoNewline -ForegroundColor Green
-Write-Host 'Ver proveedores conectados'
-Write-Host 'OpenCode-Repair  ' -NoNewline -ForegroundColor Green
-Write-Host 'Revisar instalación'
+Write-Host 'oc                ' -NoNewline -ForegroundColor Green
+Write-Host 'Preparar/abrir OpenCode'
+Write-Host 'oc-connect        ' -NoNewline -ForegroundColor Green
+Write-Host 'Conectar GitHub Copilot'
+Write-Host 'oc-status         ' -NoNewline -ForegroundColor Green
+Write-Host 'Ver proveedor y credenciales'
+Write-Host 'oc-doctor         ' -NoNewline -ForegroundColor Green
+Write-Host 'Mostrar diagnóstico y último log'
 Write-Host ''
