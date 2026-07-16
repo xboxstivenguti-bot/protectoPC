@@ -122,19 +122,23 @@ services:
     restart: unless-stopped
 
   powershell:
-    image: ander-powershell:v4
+    image: ander-powershell:v5
     build:
       context: ./terminal
+      args:
+        OPENCODE_VERSION: "1.17.18"
     pull_policy: never
     container_name: ander-powershell
     environment:
       - TZ=${TZ:-America/Mexico_City}
       - HOME=/home/ander
+      - OPENCODE_DISABLE_AUTOUPDATE=1
+      - OPENCODE_DISABLE_PRUNE=1
+      - OPENCODE_DISABLE_TERMINAL_TITLE=1
     volumes:
       - ./data/workspace:/workspace
       - ./data/opencode-share:/home/ander/.local/share/opencode
       - ./data/opencode-config:/home/ander/.config/opencode
-      - ./data/opencode-cache:/home/ander/.cache/opencode
     restart: unless-stopped
 
 volumes:
