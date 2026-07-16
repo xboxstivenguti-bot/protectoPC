@@ -93,7 +93,7 @@ services:
     restart: unless-stopped
 
   powershell:
-    image: ander-powershell:v2
+    image: ander-powershell:v3
     build:
       context: ./terminal
     pull_policy: never
