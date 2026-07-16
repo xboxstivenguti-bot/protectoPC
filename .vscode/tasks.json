@@ -21,6 +21,12 @@
       "problemMatcher": []
     },
     {
+      "label": "GitHub: Guardar cambios",
+      "type": "shell",
+      "command": "bash ./scripts/push-changes.sh",
+      "problemMatcher": []
+    },
+    {
       "label": "ANDER: Ver contenedores",
       "type": "shell",
       "command": "docker compose ps",
