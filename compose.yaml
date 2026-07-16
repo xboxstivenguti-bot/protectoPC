@@ -28,10 +28,17 @@ services:
       - LC_ALL=es_MX.UTF-8
       - FILE_MANAGER_PATH=/config/workspace
       - START_DOCKER=false
-      - SELKIES_MANUAL_WIDTH=1280
-      - SELKIES_MANUAL_HEIGHT=720
-      - MAX_RES=1920x1080
-      - SELKIES_SCALING_DPI=86
+      - PIXELFLUX_WAYLAND=false
+      - DISABLE_ZINK=true
+      - DISABLE_DRI3=true
+      - "SELKIES_USE_CPU=true|locked"
+      - SELKIES_ENCODER=jpeg
+      - SELKIES_FRAMERATE=30
+      - SELKIES_MANUAL_WIDTH=1024
+      - SELKIES_MANUAL_HEIGHT=768
+      - MAX_RES=1024x768
+      - SELKIES_FORCE_ALIGNED_RESOLUTION=true
+      - SELKIES_SCALING_DPI=82
       - SELKIES_USE_CSS_SCALING=true
       - SELKIES_USE_BROWSER_CURSORS=true
       - SELKIES_UI_SIDEBAR_SHOW_TRACKPAD=true
@@ -47,9 +54,28 @@ services:
     shm_size: "1gb"
     restart: unless-stopped
 
+  browser-clean:
+    image: alpine:3.21
+    container_name: ander-browser-clean
+    volumes:
+      - ./data/chromium:/config
+    command:
+      - sh
+      - -c
+      - |
+        find /config -type f -name SingletonLock -delete 2>/dev/null || true
+        find /config -type f -name SingletonSocket -delete 2>/dev/null || true
+        find /config -type f -name SingletonCookie -delete 2>/dev/null || true
+        find /config -type f -name DevToolsActivePort -delete 2>/dev/null || true
+        exit 0
+    restart: "no"
+
   browser:
     image: lscr.io/linuxserver/chromium:latest
     container_name: ander-browser
+    depends_on:
+      browser-clean:
+        condition: service_completed_successfully
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
@@ -57,11 +83,18 @@ services:
       - TITLE=ANDER Browser
       - SUBFOLDER=/browser/
       - LC_ALL=es_MX.UTF-8
-      - CHROME_CLI=--start-maximized --disable-features=Translate --homepage=https://www.google.com
-      - SELKIES_MANUAL_WIDTH=1280
-      - SELKIES_MANUAL_HEIGHT=720
-      - MAX_RES=1920x1080
-      - SELKIES_SCALING_DPI=82
+      - CHROME_CLI=--start-maximized --disable-features=Translate --disable-gpu --homepage=https://www.google.com
+      - PIXELFLUX_WAYLAND=false
+      - DISABLE_ZINK=true
+      - DISABLE_DRI3=true
+      - "SELKIES_USE_CPU=true|locked"
+      - SELKIES_ENCODER=jpeg
+      - SELKIES_FRAMERATE=30
+      - SELKIES_MANUAL_WIDTH=1024
+      - SELKIES_MANUAL_HEIGHT=768
+      - MAX_RES=1024x768
+      - SELKIES_FORCE_ALIGNED_RESOLUTION=true
+      - SELKIES_SCALING_DPI=80
       - SELKIES_USE_CSS_SCALING=true
       - SELKIES_USE_BROWSER_CURSORS=true
       - SELKIES_UI_SIDEBAR_SHOW_TRACKPAD=true
@@ -71,10 +104,18 @@ services:
       - SELKIES_MICROPHONE_ENABLED=true
       - SELKIES_CLIPBOARD_ENABLED=true
       - SELKIES_FILE_TRANSFERS=upload,download
+      - SELKIES_DEBUG=false
     volumes:
       - ./data/chromium:/config
       - ./data/workspace:/config/Downloads
-    shm_size: "1gb"
+    shm_size: "2gb"
+    stop_grace_period: 15s
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:3000/browser/ >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 35s
     restart: unless-stopped
 
   code-settings:
@@ -94,9 +135,9 @@ services:
           find /config/data/User/profiles -mindepth 1 -maxdepth 1 -type d -exec cp -f /defaults/settings.json {}/settings.json \;
         fi
         if [ ! -f /config/.ander-ultracompact-v2 ]; then
-          rm -rf /config/data/User/workspaceStorage
-          rm -f /config/data/User/globalStorage/storage.json
-          rm -f /config/data/User/globalStorage/state.vscdb*
+          find /config/data/User/workspaceStorage -mindepth 1 -delete 2>/dev/null || true
+          find /config/data/User/globalStorage -maxdepth 1 -type f -name 'storage.json' -delete 2>/dev/null || true
+          find /config/data/User/globalStorage -maxdepth 1 -type f -name 'state.vscdb*' -delete 2>/dev/null || true
           touch /config/.ander-ultracompact-v2
         fi
         chmod -R a+rwX /config/data/User /config/data/Machine
