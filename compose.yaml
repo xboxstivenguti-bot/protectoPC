@@ -13,6 +13,7 @@ services:
       - linux
       - browser
       - code
+      - powershell
     restart: unless-stopped
 
   linux:
@@ -89,6 +90,18 @@ services:
     volumes:
       - ./data/code-server:/config
       - ./data/workspace:/config/workspace
+    restart: unless-stopped
+
+  powershell:
+    build:
+      context: ./terminal
+    image: ander-powershell:latest
+    container_name: ander-powershell
+    environment:
+      - TZ=${TZ:-America/Mexico_City}
+    volumes:
+      - ./data/workspace:/workspace
+      - ./data/powershell:/home/ander/.local/share/powershell
     restart: unless-stopped
 
 volumes:
