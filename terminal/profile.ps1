@@ -14,9 +14,19 @@ function la { Get-ChildItem -Force @args }
 function .. { Set-Location .. }
 function workspace { Set-Location /workspace }
 
+function Install-OpenCode {
+    Write-Host 'Instalando OpenCode mediante npm...' -ForegroundColor Cyan
+    sudo npm install -g opencode-ai
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host 'OpenCode instalado. Ejecuta: opencode' -ForegroundColor Green
+    } else {
+        Write-Host 'No se pudo instalar OpenCode. Revisa la conexión y vuelve a intentarlo.' -ForegroundColor Red
+    }
+}
+
 Clear-Host
 Write-Host 'ANDER PowerShell 7' -ForegroundColor Cyan
 Write-Host 'Workspace compartido: /workspace' -ForegroundColor DarkGray
 Write-Host 'Node.js, npm, Python, Git, curl y sudo están disponibles.' -ForegroundColor DarkGray
-Write-Host 'Para instalar OpenCode usa la instrucción oficial vigente desde opencode.ai/docs.' -ForegroundColor DarkGray
+Write-Host 'Para instalar OpenCode ejecuta: Install-OpenCode' -ForegroundColor DarkGray
 Write-Host ''
