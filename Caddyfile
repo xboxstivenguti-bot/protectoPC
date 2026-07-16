@@ -1,0 +1,24 @@
+:8080 {
+  encode zstd gzip
+
+  @linux path /linux/*
+  handle @linux {
+    reverse_proxy linux:3000
+  }
+
+  @browser path /browser/*
+  handle @browser {
+    reverse_proxy browser:3000
+  }
+
+  @code path /code/*
+  handle_path @code {
+    reverse_proxy code:8443
+  }
+
+  handle {
+    root * /srv
+    try_files {path} /index.html
+    file_server
+  }
+}
