@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "formulahendry.code-runner",
+    "ms-azuretools.vscode-docker",
+    "ms-python.python",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ritwickdey.LiveServer"
+  ]
+}
