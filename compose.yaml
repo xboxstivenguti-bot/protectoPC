@@ -95,6 +95,7 @@ services:
   powershell:
     build:
       context: ./terminal
+    pull_policy: never
     container_name: ander-powershell
     environment:
       - TZ=${TZ:-America/Mexico_City}
