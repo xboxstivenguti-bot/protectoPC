@@ -1,0 +1,36 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "ANDER: Iniciar PC",
+      "type": "shell",
+      "command": "bash ./start.sh",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "ANDER: Detener PC",
+      "type": "shell",
+      "command": "bash ./stop.sh",
+      "problemMatcher": []
+    },
+    {
+      "label": "GitHub: Traer cambios",
+      "type": "shell",
+      "command": "git pull --ff-only",
+      "problemMatcher": []
+    },
+    {
+      "label": "ANDER: Ver contenedores",
+      "type": "shell",
+      "command": "docker compose ps",
+      "problemMatcher": []
+    },
+    {
+      "label": "ANDER: Ver logs",
+      "type": "shell",
+      "command": "docker compose logs -f --tail=100",
+      "problemMatcher": []
+    }
+  ]
+}
