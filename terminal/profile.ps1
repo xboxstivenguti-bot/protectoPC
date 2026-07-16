@@ -1,6 +1,16 @@
 $Host.UI.RawUI.WindowTitle = 'ANDER PowerShell'
 Set-Location /workspace
 
+if (Get-Module -ListAvailable -Name PSReadLine) {
+    Import-Module PSReadLine
+    Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+    Set-PSReadLineKeyHandler -Key Shift+Tab -Function TabCompletePrevious
+    Set-PSReadLineKeyHandler -Key Escape -Function RevertLine
+    Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
+    Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+    Set-PSReadLineOption -HistoryNoDuplicates
+}
+
 function prompt {
     $path = (Get-Location).Path.Replace('/workspace', '~')
     Write-Host 'ander' -NoNewline -ForegroundColor Cyan
@@ -67,6 +77,7 @@ Clear-Host
 Write-Host 'ANDER PowerShell 7' -ForegroundColor Cyan
 Write-Host 'Workspace compartido: /workspace' -ForegroundColor DarkGray
 Write-Host 'OpenCode, Node.js, npm, Python, Git, curl y sudo están disponibles.' -ForegroundColor DarkGray
+Write-Host 'Tab autocompleta · Shift+Tab retrocede · Esc cancela o regresa.' -ForegroundColor DarkGray
 Write-Host ''
 Write-Host 'OpenCode-Start   ' -NoNewline -ForegroundColor Green
 Write-Host 'Abrir OpenCode'
