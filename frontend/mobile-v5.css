@@ -1,0 +1,61 @@
+/* ANDER CLOUD PC · Barra de tareas y estado del dispositivo v5 */
+.task{position:absolute}
+.task-apps{gap:6px!important;overflow:visible!important}
+.task-app{
+  width:34px!important;
+  min-width:34px!important;
+  max-width:34px!important;
+  height:34px!important;
+  padding:0!important;
+  justify-content:center!important;
+  position:relative!important;
+  overflow:visible!important;
+  border-color:transparent!important;
+  background:transparent!important;
+}
+.task-app span{display:none!important}
+.task-app img{width:24px!important;height:24px!important}
+.task-app.active{
+  background:#4d68c94a!important;
+  border:1px solid #7790ff9c!important;
+  box-shadow:inset 0 -2px #7ca0ff;
+}
+.task-app.has-many:after{
+  content:'';
+  position:absolute;
+  left:7px;right:7px;bottom:-3px;
+  height:2px;border-radius:999px;background:#89a6ff;
+  box-shadow:0 3px #89a6ff77;
+}
+.task-count{
+  position:absolute;right:-3px;top:-4px;
+  min-width:14px;height:14px;padding:0 3px;
+  border-radius:999px;background:#607cff;color:#fff;
+  border:1px solid #b7c5ff;font-size:7px;display:grid;place-items:center;
+}
+.task-device-status{
+  display:flex;align-items:center;gap:5px;
+  flex:0 0 auto;margin-left:auto;
+  padding:0 4px;height:32px;
+  color:#e8edff;font-size:7px;
+}
+.device-chip{display:flex;align-items:center;gap:3px;min-width:27px;justify-content:center}
+.net-bars{display:flex;align-items:flex-end;gap:1px;height:13px}
+.net-bars i{display:block;width:2px;border-radius:2px;background:#4f5c78}
+.net-bars i:nth-child(1){height:4px}.net-bars i:nth-child(2){height:7px}.net-bars i:nth-child(3){height:10px}.net-bars i:nth-child(4){height:13px}
+.net-bars[data-level='1'] i:nth-child(-n+1),.net-bars[data-level='2'] i:nth-child(-n+2),.net-bars[data-level='3'] i:nth-child(-n+3),.net-bars[data-level='4'] i{background:#eef3ff}
+.battery-shell{width:25px;height:12px;border:1px solid #dce5ff;border-radius:3px;position:relative;padding:1px}
+.battery-shell:after{content:'';position:absolute;right:-3px;top:3px;width:2px;height:5px;border-radius:0 2px 2px 0;background:#dce5ff}
+.battery-fill{height:100%;width:0;border-radius:1px;background:#6cf0a7;transition:width .2s}
+.battery-text{font-variant-numeric:tabular-nums;min-width:18px;text-align:right}
+.task-group-flyout{bottom:48px!important}
+.browser-native .wincontrols{display:flex!important}
+@media(max-width:760px){
+  .task{gap:4px!important;padding:5px 5px!important}
+  .task-app{width:31px!important;min-width:31px!important;max-width:31px!important;height:31px!important}
+  .task-app img{width:22px!important;height:22px!important}
+  .task-device-status{gap:3px;padding:0 1px;font-size:6px}
+  .device-chip{gap:2px;min-width:24px}
+  .battery-shell{width:22px;height:11px}
+  .clock{margin-left:0!important}
+}
