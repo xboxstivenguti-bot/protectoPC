@@ -11,6 +11,7 @@
   "code-runner.ignoreSelection": true,
   "code-runner.saveFileBeforeRun": true,
   "code-runner.fileDirectoryAsCwd": false,
+  "code-runner.respectShebang": false,
   "code-runner.executorMap": {
     "javascript": "node"
   }
