@@ -46,6 +46,18 @@ function OpenCode-AuthFile {
     return (Join-Path $HOME '.local/share/opencode/auth.json')
 }
 
+function Show-GitHubDeviceLink {
+    $url = 'https://github.com/login/device'
+    $esc = [char]27
+    Write-Host ''
+    Write-Host 'ABRE ESTE ENLACE EN CHROMIUM O SAFARI:' -ForegroundColor Yellow
+    Write-Host "$esc]8;;$url$esc\$url$esc]8;;$esc\" -ForegroundColor Cyan
+    Write-Host 'Después escribe el código que OpenCode muestre y autoriza la cuenta.' -ForegroundColor Gray
+    Write-Host 'Mientras no termines ese paso, Waiting for authorization es normal.' -ForegroundColor DarkGray
+    Write-Host 'Para cancelar la espera usa Ctrl + C, no Esc.' -ForegroundColor DarkGray
+    Write-Host ''
+}
+
 function OpenCode-Status {
     Write-Host ''
     Write-Host '=== ANDER OpenCode Status ===' -ForegroundColor Cyan
@@ -75,9 +87,7 @@ function Connect-OpenCode {
 
     Write-Host ''
     Write-Host 'Conectando GitHub Copilot con OpenCode...' -ForegroundColor Cyan
-    Write-Host 'OpenCode mostrará github.com/login/device y un código.' -ForegroundColor Gray
-    Write-Host 'Abre esa dirección en el teléfono y autoriza tu cuenta.' -ForegroundColor Gray
-    Write-Host ''
+    Show-GitHubDeviceLink
 
     & opencode auth login --provider github-copilot
     if ($LASTEXITCODE -ne 0) {
@@ -154,17 +164,20 @@ Set-Alias oc-start OpenCode-Start
 Set-Alias oc-connect Connect-OpenCode
 Set-Alias oc-status OpenCode-Status
 Set-Alias oc-doctor OpenCode-Doctor
+Set-Alias github-device Show-GitHubDeviceLink
 
 Clear-Host
 Write-Host 'ANDER PowerShell 7' -ForegroundColor Cyan
 Write-Host 'Workspace compartido: /workspace' -ForegroundColor DarkGray
 Write-Host 'OpenCode, Node.js, npm, Python, Git, curl y sudo están disponibles.' -ForegroundColor DarkGray
-Write-Host 'Tab autocompleta · Shift+Tab retrocede · Esc cancela o regresa.' -ForegroundColor DarkGray
+Write-Host 'Tab autocompleta · Shift+Tab retrocede · Esc limpia · Ctrl+C cancela procesos.' -ForegroundColor DarkGray
 Write-Host ''
 Write-Host 'oc                ' -NoNewline -ForegroundColor Green
 Write-Host 'Preparar/abrir OpenCode'
 Write-Host 'oc-connect        ' -NoNewline -ForegroundColor Green
 Write-Host 'Conectar GitHub Copilot'
+Write-Host 'github-device     ' -NoNewline -ForegroundColor Green
+Write-Host 'Mostrar enlace de autorización'
 Write-Host 'oc-status         ' -NoNewline -ForegroundColor Green
 Write-Host 'Ver proveedor y credenciales'
 Write-Host 'oc-doctor         ' -NoNewline -ForegroundColor Green
