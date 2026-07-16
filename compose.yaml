@@ -1,0 +1,85 @@
+services:
+  gateway:
+    image: caddy:2-alpine
+    container_name: ander-gateway
+    ports:
+      - "${ANDER_PORT:-8080}:8080"
+    volumes:
+      - ./frontend:/srv:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - linux
+      - browser
+      - code
+    restart: unless-stopped
+
+  linux:
+    image: lscr.io/linuxserver/webtop:debian-xfce
+    container_name: ander-linux
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/Mexico_City}
+      - TITLE=ANDER Linux
+      - SUBFOLDER=/linux/
+      - CUSTOM_USER=${ANDER_USER:-ander}
+      - PASSWORD=${ANDER_PASSWORD:-cambia-esta-clave}
+      - LC_ALL=es_MX.UTF-8
+      - FILE_MANAGER_PATH=/config/workspace
+      - START_DOCKER=false
+      - SELKIES_MANUAL_WIDTH=1280
+      - SELKIES_MANUAL_HEIGHT=720
+      - MAX_RES=1920x1080
+      - SELKIES_SCALING_DPI=86
+      - SELKIES_USE_CSS_SCALING=true
+    volumes:
+      - ./data/linux:/config
+      - ./data/workspace:/config/workspace
+    shm_size: "1gb"
+    restart: unless-stopped
+
+  browser:
+    image: lscr.io/linuxserver/chromium:latest
+    container_name: ander-browser
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/Mexico_City}
+      - TITLE=ANDER Browser
+      - SUBFOLDER=/browser/
+      - CUSTOM_USER=${ANDER_USER:-ander}
+      - PASSWORD=${ANDER_PASSWORD:-cambia-esta-clave}
+      - LC_ALL=es_MX.UTF-8
+      - CHROME_CLI=--start-maximized --disable-features=Translate --homepage=https://www.google.com
+      - SELKIES_MANUAL_WIDTH=1280
+      - SELKIES_MANUAL_HEIGHT=720
+      - MAX_RES=1920x1080
+      - SELKIES_SCALING_DPI=82
+      - SELKIES_USE_CSS_SCALING=true
+    volumes:
+      - ./data/chromium:/config
+      - ./data/workspace:/config/Downloads
+    shm_size: "1gb"
+    restart: unless-stopped
+
+  code:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: ander-code
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/Mexico_City}
+      - PASSWORD=${ANDER_PASSWORD:-cambia-esta-clave}
+      - SUDO_PASSWORD=${ANDER_PASSWORD:-cambia-esta-clave}
+      - DEFAULT_WORKSPACE=/config/workspace
+      - PWA_APPNAME=ANDER Code
+    volumes:
+      - ./data/code-server:/config
+      - ./data/workspace:/config/workspace
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:
