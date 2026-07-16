@@ -24,8 +24,6 @@ services:
       - TZ=${TZ:-America/Mexico_City}
       - TITLE=ANDER Linux
       - SUBFOLDER=/linux/
-      - CUSTOM_USER=${ANDER_USER:-ander}
-      - PASSWORD=${ANDER_PASSWORD:-cambia-esta-clave}
       - LC_ALL=es_MX.UTF-8
       - FILE_MANAGER_PATH=/config/workspace
       - START_DOCKER=false
@@ -34,6 +32,14 @@ services:
       - MAX_RES=1920x1080
       - SELKIES_SCALING_DPI=86
       - SELKIES_USE_CSS_SCALING=true
+      - SELKIES_USE_BROWSER_CURSORS=true
+      - SELKIES_UI_SIDEBAR_SHOW_TRACKPAD=true
+      - SELKIES_UI_SIDEBAR_SHOW_KEYBOARD_BUTTON=true
+      - SELKIES_UI_SIDEBAR_SHOW_SOFT_BUTTONS=true
+      - SELKIES_AUDIO_ENABLED=true
+      - SELKIES_MICROPHONE_ENABLED=true
+      - SELKIES_CLIPBOARD_ENABLED=true
+      - SELKIES_FILE_TRANSFERS=upload,download
     volumes:
       - ./data/linux:/config
       - ./data/workspace:/config/workspace
@@ -49,8 +55,6 @@ services:
       - TZ=${TZ:-America/Mexico_City}
       - TITLE=ANDER Browser
       - SUBFOLDER=/browser/
-      - CUSTOM_USER=${ANDER_USER:-ander}
-      - PASSWORD=${ANDER_PASSWORD:-cambia-esta-clave}
       - LC_ALL=es_MX.UTF-8
       - CHROME_CLI=--start-maximized --disable-features=Translate --homepage=https://www.google.com
       - SELKIES_MANUAL_WIDTH=1280
@@ -58,6 +62,14 @@ services:
       - MAX_RES=1920x1080
       - SELKIES_SCALING_DPI=82
       - SELKIES_USE_CSS_SCALING=true
+      - SELKIES_USE_BROWSER_CURSORS=true
+      - SELKIES_UI_SIDEBAR_SHOW_TRACKPAD=true
+      - SELKIES_UI_SIDEBAR_SHOW_KEYBOARD_BUTTON=true
+      - SELKIES_UI_SIDEBAR_SHOW_SOFT_BUTTONS=true
+      - SELKIES_AUDIO_ENABLED=true
+      - SELKIES_MICROPHONE_ENABLED=true
+      - SELKIES_CLIPBOARD_ENABLED=true
+      - SELKIES_FILE_TRANSFERS=upload,download
     volumes:
       - ./data/chromium:/config
       - ./data/workspace:/config/Downloads
@@ -71,7 +83,6 @@ services:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - TZ=${TZ:-America/Mexico_City}
-      - PASSWORD=${ANDER_PASSWORD:-cambia-esta-clave}
       - SUDO_PASSWORD=${ANDER_PASSWORD:-cambia-esta-clave}
       - DEFAULT_WORKSPACE=/config/workspace
       - PWA_APPNAME=ANDER Code
