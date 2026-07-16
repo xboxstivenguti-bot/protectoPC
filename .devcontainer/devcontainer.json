@@ -1,0 +1,41 @@
+{
+  "name": "ANDER CLOUD PC Linux",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    }
+  },
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "ANDER CLOUD PC",
+      "onAutoForward": "notify",
+      "visibility": "private"
+    }
+  },
+  "postCreateCommand": "cp -n .env.example .env || true && chmod +x start.sh stop.sh scripts/*.sh",
+  "postStartCommand": "bash scripts/codespace-start.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "workbench.startupEditor": "none",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "git.autofetch": true,
+        "git.confirmSync": false
+      },
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "ms-python.python",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ritwickdey.LiveServer"
+      ]
+    }
+  }
+}
