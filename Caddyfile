@@ -1,21 +1,21 @@
 :8080 {
   encode zstd gzip
 
-  @linux path /linux/*
-  handle @linux {
+  # Webtop y Chromium ya conocen su SUBFOLDER, por eso conservamos el prefijo.
+  handle /linux/* {
     reverse_proxy linux:3000
   }
 
-  @browser path /browser/*
-  handle @browser {
+  handle /browser/* {
     reverse_proxy browser:3000
   }
 
-  @code path /code/*
-  handle_path @code {
+  # code-server recibe la ruta sin /code para que carguen bien sus recursos.
+  handle_path /code/* {
     reverse_proxy code:8443
   }
 
+  # Interfaz principal de la laptop ANDER.
   handle {
     root * /srv
     try_files {path} /index.html
