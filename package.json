@@ -1,0 +1,16 @@
+{
+  "name": "ander-cloud-pc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ANDER CLOUD PC Linux",
+  "main": "start.js",
+  "scripts": {
+    "start": "node start.js",
+    "stop": "docker compose down --remove-orphans",
+    "status": "docker compose ps",
+    "logs": "docker compose logs -f --tail=150"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
