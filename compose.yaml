@@ -77,9 +77,23 @@ services:
     shm_size: "1gb"
     restart: unless-stopped
 
+  code-settings:
+    image: alpine:3.21
+    volumes:
+      - ./data/code-server:/config
+      - ./code-server/settings.json:/defaults/settings.json:ro
+    command:
+      - sh
+      - -c
+      - mkdir -p /config/data/User && cp -f /defaults/settings.json /config/data/User/settings.json && chmod 666 /config/data/User/settings.json
+    restart: "no"
+
   code:
     image: lscr.io/linuxserver/code-server:latest
     container_name: ander-code
+    depends_on:
+      code-settings:
+        condition: service_completed_successfully
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
