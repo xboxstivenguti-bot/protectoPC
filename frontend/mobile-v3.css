@@ -1,0 +1,75 @@
+/* ANDER CLOUD PC · Pantalla móvil grande v3 */
+.scene{
+  padding:2px 0 84px!important;
+  align-items:flex-start!important;
+  overflow-x:hidden!important;
+}
+.laptop{
+  width:100vw!important;
+  max-width:1320px!important;
+  margin:0 auto!important;
+}
+.display{
+  width:100%!important;
+  padding:3px 3px 11px!important;
+  border-radius:15px 15px 7px 7px!important;
+}
+.display:after{bottom:2px!important;font-size:7px!important}
+.camera{top:1px!important}
+.screen{
+  aspect-ratio:4/3!important;
+  width:100%!important;
+  border-radius:8px!important;
+}
+.desktop{padding:11px 9px 50px!important}
+.icons{
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  gap:7px!important;
+  align-items:start!important;
+}
+.icon{font-size:7px!important;line-height:1.08!important;gap:4px!important;min-width:0!important}
+.tile{width:40px!important;height:40px!important;border-radius:11px!important}
+.icon .app-logo{padding:1px!important}
+.window-layer{inset:0 0 45px!important}
+.os-window{min-width:180px!important;min-height:125px!important;border-radius:8px!important}
+.winbar{height:27px!important;padding:0 4px 0 6px!important;gap:5px!important}
+.winicon{width:17px!important;height:17px!important}
+.wintitle{font-size:8px!important}
+.wincontrols button{width:25px!important;height:23px!important;font-size:9px!important}
+.winbody{height:calc(100% - 27px)!important}
+.task{height:45px!important;padding:5px 7px!important}
+.start{width:34px!important;height:34px!important}
+.task-app{height:31px!important;font-size:7px!important;max-width:94px!important}
+.task-app img{width:18px!important;height:18px!important}
+.clock{font-size:7px!important}
+.start-menu{bottom:50px!important;width:min(370px,calc(100% - 10px))!important;padding:9px!important}
+.start-apps{grid-template-columns:repeat(3,1fr)!important;gap:6px!important}
+.start-app{font-size:7px!important;padding:7px 3px!important}
+.start-app img{width:31px!important;height:31px!important}
+.hinge{height:18px!important;width:97%!important}
+.base{
+  height:350px!important;
+  padding:24px 8px 14px!important;
+  border-radius:7px 7px 26px 26px!important;
+}
+.keyboard{gap:3px!important}
+.keyboard-row{gap:3px!important}
+.key{height:22px!important;font-size:6px!important;border-radius:5px!important;padding:0 2px!important}
+.trackpad{width:238px!important;height:70px!important;margin-top:17px!important}
+.track-buttons{width:238px!important;margin-top:3px!important}
+.track-buttons button{height:19px!important;font-size:7px!important}
+.status{right:22px!important;bottom:18px!important}
+.center-button{width:43px!important;height:43px!important;font-size:18px!important;bottom:max(10px,env(safe-area-inset-bottom))!important}
+@media(max-width:760px){
+  .scene{padding:1px 0 78px!important}
+  .laptop{width:100vw!important}
+  .display{width:100%!important;padding:2px 2px 10px!important}
+  .screen{aspect-ratio:4/3!important}
+  .icons{grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:5px!important}
+  .tile{width:37px!important;height:37px!important}
+  .icon{font-size:6.5px!important}
+  .base{height:346px!important;padding:24px 6px 12px!important}
+  .key{height:22px!important;font-size:5.8px!important}
+  .trackpad,.track-buttons{width:230px!important}
+  .trackpad{height:68px!important}
+}
