@@ -27,9 +27,13 @@
         "workbench.startupEditor": "none",
         "terminal.integrated.defaultProfile.linux": "bash",
         "git.autofetch": true,
-        "git.confirmSync": false
+        "git.confirmSync": false,
+        "code-runner.runInTerminal": true,
+        "code-runner.ignoreSelection": true,
+        "code-runner.saveFileBeforeRun": true
       },
       "extensions": [
+        "formulahendry.code-runner",
         "ms-azuretools.vscode-docker",
         "ms-python.python",
         "dbaeumer.vscode-eslint",
