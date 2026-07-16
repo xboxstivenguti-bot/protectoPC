@@ -85,7 +85,20 @@ services:
     command:
       - sh
       - -c
-      - mkdir -p /config/data/User && cp -f /defaults/settings.json /config/data/User/settings.json && chmod 666 /config/data/User/settings.json
+      - |
+        set -e
+        mkdir -p /config/data/User /config/data/Machine /config/data/User/globalStorage
+        cp -f /defaults/settings.json /config/data/User/settings.json
+        cp -f /defaults/settings.json /config/data/Machine/settings.json
+        if [ -d /config/data/User/profiles ]; then
+          find /config/data/User/profiles -mindepth 1 -maxdepth 1 -type d -exec cp -f /defaults/settings.json {}/settings.json \;
+        fi
+        if [ ! -f /config/.ander-ultracompact-v1 ]; then
+          rm -rf /config/data/User/workspaceStorage
+          rm -f /config/data/User/globalStorage/storage.json
+          touch /config/.ander-ultracompact-v1
+        fi
+        chmod -R a+rwX /config/data/User /config/data/Machine
     restart: "no"
 
   code:
@@ -100,7 +113,8 @@ services:
       - TZ=${TZ:-America/Mexico_City}
       - SUDO_PASSWORD=${ANDER_PASSWORD:-cambia-esta-clave}
       - DEFAULT_WORKSPACE=/config/workspace
-      - PWA_APPNAME=ANDER Code
+      - PWA_APPNAME=ANDER Code Compact
+      - CS_DISABLE_GETTING_STARTED_OVERRIDE=1
     volumes:
       - ./data/code-server:/config
       - ./data/workspace:/config/workspace
