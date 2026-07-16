@@ -7,15 +7,15 @@
 <style>html,body{margin:0;width:100%;height:100%;background:#050816;color:#fff;font-family:system-ui,sans-serif}.loading{height:100%;display:grid;place-content:center;text-align:center;gap:12px}.loading b{letter-spacing:.22em}.loading span{color:#99a5c7;font-size:13px}</style>
 </head>
 <body>
-<div class="loading"><b>ANDER CLOUD PC</b><span>Preparando teclado y ventanas agrupadas…</span></div>
+<div class="loading"><b>ANDER CLOUD PC</b><span>Preparando controles, tareas y estado del dispositivo…</span></div>
 <script>
 (async()=>{
   try{
-    const response=await fetch('/index.html?v=windows-v4',{cache:'no-store'});
+    const response=await fetch('/index.html?v=system-v5',{cache:'no-store'});
     if(!response.ok) throw new Error(`HTTP ${response.status}`);
     let html=await response.text();
-    html=html.replace('</head>','<link rel="stylesheet" href="/mobile-v3.css?v=3"><link rel="stylesheet" href="/mobile-v4.css?v=4"></head>');
-    html=html.replace('</body>','<script src="/mobile-v3.js?v=3"><\/script><script src="/mobile-v4.js?v=4"><\/script></body>');
+    html=html.replace('</head>','<link rel="stylesheet" href="/mobile-v3.css?v=3"><link rel="stylesheet" href="/mobile-v4.css?v=4"><link rel="stylesheet" href="/mobile-v5.css?v=5"></head>');
+    html=html.replace('</body>','<script src="/mobile-v3.js?v=3"><\/script><script src="/mobile-v4.js?v=4"><\/script><script src="/mobile-v5.js?v=5"><\/script></body>');
     document.open();
     document.write(html);
     document.close();
