@@ -1,54 +1,88 @@
 # ANDER CLOUD PC Linux v1
 
-Esta versión ya no intenta fingir Linux dentro de un HTML. Levanta tres servicios reales:
+ANDER CLOUD PC ya usa servicios Linux reales:
 
-- **ANDER Linux:** escritorio Debian XFCE completo en el navegador.
-- **ANDER Browser:** Chromium real; abre YouTube, Google, GitHub y descargas sin API de cada servicio.
-- **ANDER Code:** code-server, VS Code ejecutándose en Linux con terminal y extensiones.
+- **ANDER Linux:** Debian XFCE completo en el navegador.
+- **ANDER Browser:** Chromium real para YouTube, Google, GitHub y descargas sin API por aplicación.
+- **ANDER Code:** VS Code web con terminal, Git y extensiones.
 
-Los archivos de trabajo se guardan en `data/workspace` y se comparten entre Linux y VS Code.
+Los proyectos se guardan en `data/workspace` y se comparten entre Linux y VS Code.
 
-## Activarlo en el Codespace que ya tienes abierto
+## Arranque con un solo botón
 
-Primero abre la terminal y trae todo lo que se subió al repositorio:
+El archivo principal es:
+
+```text
+start.js
+```
+
+Abre `start.js` en VS Code y pulsa el botón **Play / Run Code** de la esquina superior derecha. Code Runner ejecutará:
+
+```bash
+node start.js
+```
+
+Ese único archivo hace todo lo siguiente:
+
+1. Comprueba y sincroniza GitHub mediante `git fetch` y `git pull --ff-only` cuando no hay cambios locales.
+2. Crea `.env` y todas las carpetas persistentes necesarias.
+3. Detiene la sesión anterior y elimina contenedores antiguos.
+4. Libera el puerto configurado si otro proceso lo está usando.
+5. Espera a que Docker esté listo.
+6. Descarga y reconstruye Linux, Chromium, VS Code y Caddy.
+7. Espera hasta que la laptop responda.
+8. Muestra y trata de abrir automáticamente la URL del Codespace.
+
+También puedes iniciarlo desde la terminal:
+
+```bash
+node start.js
+```
+
+O mediante:
+
+```bash
+npm start
+```
+
+## Primera vez en el Codespace
+
+Después de traer estos cambios ejecuta:
 
 ```bash
 git pull --ff-only
 ```
 
-Después abre la paleta de comandos de VS Code, busca **Rebuild** y selecciona:
+Luego abre la paleta de comandos y selecciona:
 
 ```text
 Codespaces: Rebuild Container
 ```
 
-La reconstrucción es necesaria porque este proyecto agregó Docker, Node.js, Python y la configuración completa del contenedor. Al terminar, `scripts/codespace-start.sh` intentará levantar ANDER CLOUD PC automáticamente.
+La reconstrucción instala Docker, Node.js, Python y Code Runner. Después abre `start.js` y pulsa Play.
 
-Si no arranca solo, ejecuta:
+## Puerto y acceso
 
-```bash
-cp -n .env.example .env
-bash start.sh
-```
-
-Luego abre la pestaña **Puertos** y entra al puerto `8080`, identificado como **ANDER CLOUD PC**.
-
-También puedes abrir la paleta de comandos y ejecutar la tarea:
+El proyecto usa por defecto:
 
 ```text
-ANDER: Iniciar PC
+8080 — ANDER CLOUD PC
 ```
 
-## Servicios
+Cuando termine el arranque, abre la pestaña **Puertos** y toca el puerto `8080` si el navegador no se abrió automáticamente.
 
-- `/` — interfaz principal de la laptop ANDER.
-- `/linux/` — escritorio Linux Debian XFCE.
-- `/browser/` — Chromium real para YouTube y cualquier página.
-- `/code/` — VS Code web con terminal, Git y extensiones.
+Servicios:
 
-## Credenciales iniciales
+```text
+/          Laptop ANDER
+/linux/    Escritorio Debian XFCE
+/browser/  Chromium real
+/code/     VS Code web
+```
 
-La reconstrucción crea `.env` usando `.env.example`. Cambia la contraseña antes de compartir el puerto:
+## Credenciales
+
+`.env` se crea desde `.env.example`:
 
 ```env
 ANDER_PORT=8080
@@ -56,41 +90,35 @@ ANDER_USER=ander
 ANDER_PASSWORD=CAMBIA_ESTA_CLAVE
 ```
 
-## Sincronización con GitHub
+Cambia la contraseña antes de compartir el puerto.
 
-`scripts/auto-sync.sh` revisa GitHub cada 60 segundos cuando el Codespace no tiene cambios locales. Solo aplica actualizaciones fast-forward y nunca pisa archivos que estés editando ni commits locales sin subir.
+## Herramientas del editor
 
-Desde **Terminal → Ejecutar tarea** también tienes:
+La configuración instala y prepara Code Runner. También incluye tareas:
 
 ```text
-GitHub: Traer cambios
-GitHub: Guardar cambios
 ANDER: Iniciar PC
 ANDER: Detener PC
 ANDER: Ver contenedores
 ANDER: Ver logs
+GitHub: Traer cambios
+GitHub: Guardar cambios
 ```
 
-Para guardar manualmente desde la terminal:
+## Sincronización con GitHub
+
+`scripts/auto-sync.sh` revisa GitHub cada 60 segundos cuando no hay cambios locales. Nunca pisa trabajo sin guardar.
+
+Para subir lo que edites desde el teléfono:
 
 ```bash
 bash scripts/push-changes.sh
 ```
 
-## Requisitos
+## Requisitos y límites
 
-Un entorno Linux con Docker y Docker Compose. GitHub Codespaces sirve para pruebas y desarrollo móvil; el Codespace se detiene cuando no se usa. Para mantener la PC encendida permanentemente se necesitará posteriormente un VPS o una mini PC Linux.
-
-## Qué resuelve
-
-- YouTube real sin YouTube Data API.
-- Chromium real con audio, sesiones y descargas.
-- Linux real con terminal y gestor de archivos.
-- VS Code web con extensiones, Git y terminal.
-- Node.js y Python disponibles en el Codespace.
-- Datos persistentes mientras exista el Codespace o servidor.
-- Acceso desde móvil, tablet o PC.
+GitHub Codespaces sirve para desarrollar y probar desde el móvil, pero se detiene cuando no se usa. Para mantener la PC encendida permanentemente será necesario después un VPS o una mini PC Linux.
 
 ## Seguridad
 
-No expongas el puerto `8080` públicamente sin contraseña segura, HTTPS y autenticación. Quien entra al escritorio Linux puede utilizar la terminal del contenedor.
+No hagas público el puerto `8080` sin contraseña segura, HTTPS y autenticación. Quien entra al escritorio Linux puede utilizar la terminal del contenedor.
