@@ -16,7 +16,13 @@ const DATA_DIRS = [
   'data/code-server',
   'data/workspace',
 ];
-const CONTAINERS = ['ander-gateway', 'ander-linux', 'ander-browser', 'ander-code'];
+const CONTAINERS = [
+  'ander-gateway',
+  'ander-linux',
+  'ander-browser',
+  'ander-code',
+  'ander-powershell',
+];
 
 process.chdir(ROOT);
 
@@ -54,9 +60,7 @@ function run(command, args = [], options = {}) {
     env: process.env,
   });
 
-  if (result.error) {
-    throw result.error;
-  }
+  if (result.error) throw result.error;
 
   if (result.status !== 0 && !options.allowFailure) {
     const detail = options.quiet
@@ -185,8 +189,7 @@ function stopPreviousSession(port) {
       quiet: true,
       allowFailure: true,
     });
-    pids = `${result.stdout || ''} ${result.stderr || ''}`
-      .match(/\b\d+\b/g) || [];
+    pids = `${result.stdout || ''} ${result.stderr || ''}`.match(/\b\d+\b/g) || [];
   }
 
   const uniquePids = [...new Set(pids)].filter((pid) => Number(pid) !== process.pid);
@@ -224,8 +227,19 @@ async function waitForDocker(timeoutMs = 60000) {
 }
 
 function startContainers() {
-  title('5/7 · Descargando y encendiendo Linux');
+  title('5/7 · Construyendo PowerShell y encendiendo la PC');
+
   run('docker', ['compose', 'pull']);
+
+  console.log('\nConstruyendo ANDER PowerShell con una imagen estable de .NET...');
+  run('docker', [
+    'compose',
+    'build',
+    '--pull',
+    '--no-cache',
+    'powershell',
+  ]);
+
   run('docker', [
     'compose',
     'up',
@@ -233,7 +247,8 @@ function startContainers() {
     '--remove-orphans',
     '--force-recreate',
   ]);
-  ok('Linux, Chromium, VS Code y el gateway fueron iniciados.');
+
+  ok('Linux, Chromium, VS Code, PowerShell y el gateway fueron iniciados.');
 }
 
 function checkHttp(port) {
@@ -268,7 +283,8 @@ async function waitForPc(port, timeoutMs = 180000) {
   }
 
   run('docker', ['compose', 'ps'], { allowFailure: true });
-  throw new Error('La PC no respondió a tiempo. Revisa los logs con: docker compose logs -f');
+  run('docker', ['compose', 'logs', '--tail=80', 'gateway', 'powershell'], { allowFailure: true });
+  throw new Error('La PC no respondió a tiempo. Arriba aparecen los logs del gateway y PowerShell.');
 }
 
 function publicUrl(port) {
@@ -316,10 +332,11 @@ async function main() {
   const url = publicUrl(port);
   console.log(`\n\x1b[1mAbre ANDER CLOUD PC aquí:\x1b[0m\n\x1b[4m${url}\x1b[0m\n`);
   console.log('Servicios:');
-  console.log(`  Laptop:   ${url}/`);
-  console.log(`  Linux:    ${url}/linux/`);
-  console.log(`  Chromium: ${url}/browser/`);
-  console.log(`  VS Code:  ${url}/code/`);
+  console.log(`  Laptop:    ${url}/`);
+  console.log(`  Linux:     ${url}/linux/`);
+  console.log(`  Chromium:  ${url}/browser/`);
+  console.log(`  VS Code:   ${url}/code/`);
+  console.log(`  PowerShell:${url}/powershell/`);
 
   if (tryOpenBrowser(url)) {
     ok('Se solicitó abrir la PC en el navegador.');
@@ -330,7 +347,9 @@ async function main() {
 
 main().catch((error) => {
   fail(error instanceof Error ? error.message : String(error));
-  console.error('\nRevisa el estado con: docker compose ps');
-  console.error('Revisa los logs con: docker compose logs -f --tail=150');
+  console.error('\nEstado de contenedores:');
+  run('docker', ['compose', 'ps'], { allowFailure: true });
+  console.error('\nÚltimos logs de gateway y PowerShell:');
+  run('docker', ['compose', 'logs', '--tail=100', 'gateway', 'powershell'], { allowFailure: true });
   process.exitCode = 1;
 });
