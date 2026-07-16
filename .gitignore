@@ -1,0 +1,12 @@
+# Secretos y configuración local
+.env
+
+# Datos persistentes de los contenedores
+/data/*
+!/data/.gitkeep
+
+# Archivos temporales
+*.log
+.DS_Store
+Thumbs.db
+node_modules/
