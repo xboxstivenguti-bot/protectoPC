@@ -23,4 +23,5 @@ USER ander
 WORKDIR /workspace
 EXPOSE 7681
 
-CMD ["ttyd", "-W", "-p", "7681", "-b", "/powershell", "pwsh", "-NoLogo", "-NoExit"]
+# Caddy elimina el prefijo /powershell antes de llegar aquí.
+CMD ["ttyd", "-W", "-p", "7681", "pwsh", "-NoLogo", "-NoExit"]
