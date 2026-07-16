@@ -1,0 +1,10 @@
+{
+  "files.exclude": {
+    "data/linux": true,
+    "data/chromium": true,
+    "data/code-server": true
+  },
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "editor.formatOnSave": true
+}
