@@ -8,19 +8,32 @@ Esta versión ya no intenta fingir Linux dentro de un HTML. Levanta tres servici
 
 Los archivos de trabajo se guardan en `data/workspace` y se comparten entre Linux y VS Code.
 
-## Inicio rápido en tu Codespace
+## Activarlo en el Codespace que ya tienes abierto
 
-Cuando los archivos aparezcan en el editor, abre la terminal y ejecuta:
+Primero abre la terminal y trae todo lo que se subió al repositorio:
 
 ```bash
-git pull
+git pull --ff-only
+```
+
+Después abre la paleta de comandos de VS Code, busca **Rebuild** y selecciona:
+
+```text
+Codespaces: Rebuild Container
+```
+
+La reconstrucción es necesaria porque este proyecto agregó Docker, Node.js, Python y la configuración completa del contenedor. Al terminar, `scripts/codespace-start.sh` intentará levantar ANDER CLOUD PC automáticamente.
+
+Si no arranca solo, ejecuta:
+
+```bash
 cp -n .env.example .env
 bash start.sh
 ```
 
 Luego abre la pestaña **Puertos** y entra al puerto `8080`, identificado como **ANDER CLOUD PC**.
 
-También puedes abrir la paleta de comandos de VS Code y ejecutar la tarea:
+También puedes abrir la paleta de comandos y ejecutar la tarea:
 
 ```text
 ANDER: Iniciar PC
@@ -35,7 +48,7 @@ ANDER: Iniciar PC
 
 ## Credenciales iniciales
 
-Copia `.env.example` como `.env` y cambia la contraseña:
+La reconstrucción crea `.env` usando `.env.example`. Cambia la contraseña antes de compartir el puerto:
 
 ```env
 ANDER_PORT=8080
@@ -43,18 +56,25 @@ ANDER_USER=ander
 ANDER_PASSWORD=CAMBIA_ESTA_CLAVE
 ```
 
-No publiques el Codespace o el servidor con la contraseña de ejemplo.
-
 ## Sincronización con GitHub
 
-El proyecto incluye `scripts/auto-sync.sh`. Cuando el Codespace está limpio, revisa GitHub cada 60 segundos y aplica cambios remotos mediante `git pull --ff-only`. Nunca pisa archivos que estés editando ni commits locales sin subir.
+`scripts/auto-sync.sh` revisa GitHub cada 60 segundos cuando el Codespace no tiene cambios locales. Solo aplica actualizaciones fast-forward y nunca pisa archivos que estés editando ni commits locales sin subir.
 
-Para guardar tus cambios desde la terminal:
+Desde **Terminal → Ejecutar tarea** también tienes:
+
+```text
+GitHub: Traer cambios
+GitHub: Guardar cambios
+ANDER: Iniciar PC
+ANDER: Detener PC
+ANDER: Ver contenedores
+ANDER: Ver logs
+```
+
+Para guardar manualmente desde la terminal:
 
 ```bash
-git add .
-git commit -m "Actualización de ANDER CLOUD PC"
-git push
+bash scripts/push-changes.sh
 ```
 
 ## Requisitos
