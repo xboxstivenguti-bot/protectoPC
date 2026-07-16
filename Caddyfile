@@ -13,14 +13,22 @@
     reverse_proxy code:8443
   }
 
-  # ttyd trabaja en raíz dentro del contenedor; Caddy elimina /powershell.
   handle_path /powershell/* {
     reverse_proxy powershell:7681
   }
 
+  @root path /
+  handle @root {
+    root * /srv
+    rewrite * /boot.html
+    header Cache-Control "no-store, no-cache, must-revalidate"
+    file_server
+  }
+
   handle {
     root * /srv
-    try_files {path} /index.html
+    header Cache-Control "no-cache"
+    try_files {path} /boot.html
     file_server
   }
 }
