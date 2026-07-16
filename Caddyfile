@@ -13,7 +13,8 @@
     reverse_proxy code:8443
   }
 
-  handle /powershell/* {
+  # ttyd trabaja en raíz dentro del contenedor; Caddy elimina /powershell.
+  handle_path /powershell/* {
     reverse_proxy powershell:7681
   }
 
