@@ -1,14 +1,24 @@
-FROM mcr.microsoft.com/powershell:7.6-ubuntu-24.04
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+ARG TARGETARCH
 
 ENV DEBIAN_FRONTEND=noninteractive \
     TERM=xterm-256color \
-    HOME=/home/ander
+    HOME=/home/ander \
+    POWERSHELL_TELEMETRY_OPTOUT=1
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-       ttyd sudo git curl wget unzip zip ca-certificates jq nano vim \
+       sudo git curl wget unzip zip ca-certificates jq nano vim \
        openssh-client build-essential python3 python3-pip python3-venv \
        nodejs npm procps lsof \
+    && case "${TARGETARCH:-amd64}" in \
+         amd64) TTYD_ARCH=x86_64 ;; \
+         arm64) TTYD_ARCH=aarch64 ;; \
+         *) echo "Arquitectura no compatible para ttyd: ${TARGETARCH}" >&2; exit 1 ;; \
+       esac \
+    && curl -fsSL "https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.${TTYD_ARCH}" -o /usr/local/bin/ttyd \
+    && chmod 0755 /usr/local/bin/ttyd \
     && useradd --create-home --uid 1000 --shell /usr/bin/pwsh ander \
     && echo 'ander ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/ander \
     && chmod 0440 /etc/sudoers.d/ander \
