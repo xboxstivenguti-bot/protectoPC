@@ -100,7 +100,6 @@ services:
       - TZ=${TZ:-America/Mexico_City}
     volumes:
       - ./data/workspace:/workspace
-      - ./data/powershell:/home/ander/.local/share/powershell
     restart: unless-stopped
 
 volumes:
