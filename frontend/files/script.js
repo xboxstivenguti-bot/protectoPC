@@ -3,6 +3,17 @@
 
   const listEl = document.querySelector('#list');
   const crumbsEl = document.querySelector('#crumbs');
+  const quickAccessEl = document.querySelector('#quickAccess');
+  const storageCardEl = document.querySelector('#storageCard');
+  const newFolderButton = document.querySelector('#newFolderButton');
+
+  const QUICK_ACCESS = [
+    { name: 'Escritorio', icon: '🖥️' },
+    { name: 'Documentos', icon: '📄' },
+    { name: 'Imagenes', icon: '🖼️' },
+    { name: 'Videos', icon: '🎬' },
+    { name: 'Descargas', icon: '⬇️' },
+  ];
 
   function formatBytes(bytes) {
     if (!Number.isFinite(bytes)) return '';
@@ -20,11 +31,15 @@
     return decodeURIComponent(location.hash.slice(1) || '');
   }
 
+  function navigate(pathname) {
+    location.hash = encodeURIComponent(pathname);
+  }
+
   function renderCrumbs(pathname) {
     crumbsEl.innerHTML = '';
     const segments = pathname.split('/').filter(Boolean);
     const rootButton = document.createElement('button');
-    rootButton.textContent = 'workspace';
+    rootButton.textContent = 'Inicio';
     rootButton.addEventListener('click', () => navigate(''));
     crumbsEl.appendChild(rootButton);
 
@@ -42,13 +57,45 @@
     }
   }
 
-  function navigate(pathname) {
-    location.hash = encodeURIComponent(pathname);
+  function renderQuickAccess(pathname) {
+    const atRoot = pathname === '';
+    quickAccessEl.classList.toggle('show', atRoot);
+    storageCardEl.classList.toggle('show', atRoot);
+    if (!atRoot) return;
+
+    quickAccessEl.innerHTML = '';
+    for (const folder of QUICK_ACCESS) {
+      const tile = document.createElement('button');
+      tile.type = 'button';
+      tile.className = 'qa-tile';
+      tile.innerHTML = `<span class="qa-icon">${folder.icon}</span><span>${folder.name}</span>`;
+      tile.addEventListener('click', () => navigate(`/${folder.name}`));
+      quickAccessEl.appendChild(tile);
+    }
+
+    loadStorage();
+  }
+
+  async function loadStorage() {
+    storageCardEl.innerHTML = '<div class="title">Cargando almacenamiento…</div><div class="storage-bar"><div class="storage-bar-fill"></div></div>';
+    try {
+      const response = await fetch('/api/system', { cache: 'no-store' });
+      const data = await response.json();
+      const storage = data.storage?.workspace;
+      if (!storage) throw new Error('sin datos');
+      storageCardEl.innerHTML = `
+        <div class="title"><span>Este equipo (/workspace)</span><span>${formatBytes(storage.usedBytes)} de ${formatBytes(storage.totalBytes)} usados</span></div>
+        <div class="storage-bar"><div class="storage-bar-fill" style="width:${storage.percentUsed ?? 0}%"></div></div>
+      `;
+    } catch {
+      storageCardEl.innerHTML = '<div class="title">No se pudo leer el almacenamiento</div>';
+    }
   }
 
   async function load() {
     const pathname = currentPath();
     renderCrumbs(pathname);
+    renderQuickAccess(pathname);
     listEl.innerHTML = '<div class="empty">Cargando…</div>';
     try {
       const response = await fetch(`/api/files/list?path=${encodeURIComponent(pathname)}`, { cache: 'no-store' });
@@ -96,6 +143,22 @@
       listEl.appendChild(row);
     }
   }
+
+  newFolderButton.addEventListener('click', async () => {
+    const name = (prompt('Nombre de la nueva carpeta:') || '').trim();
+    if (!name) return;
+    const target = `${currentPath()}/${name}`;
+    try {
+      const response = await fetch(`/api/files/mkdir?path=${encodeURIComponent(target)}`, { method: 'POST' });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'No se pudo crear la carpeta.');
+      }
+      load();
+    } catch (error) {
+      alert(error.message);
+    }
+  });
 
   window.addEventListener('hashchange', load);
   load();

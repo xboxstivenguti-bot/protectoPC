@@ -129,6 +129,29 @@ function listDirectory(relative, res) {
   });
 }
 
+const SPECIAL_FOLDERS = ['Escritorio', 'Documentos', 'Imagenes', 'Videos', 'Descargas'];
+
+function ensureSpecialFolders() {
+  for (const name of SPECIAL_FOLDERS) {
+    const absolute = path.join(WORKSPACE_ROOT, name);
+    try {
+      fs.mkdirSync(absolute, { recursive: true });
+    } catch {}
+  }
+}
+
+function makeDirectory(relative, res) {
+  const absolute = resolveWorkspacePath(relative);
+  if (!absolute || absolute === WORKSPACE_ROOT) return sendJson(res, 400, { error: 'Ruta no permitida.' });
+  if (fs.existsSync(absolute)) return sendJson(res, 409, { error: 'Ya existe algo con ese nombre.' });
+  try {
+    fs.mkdirSync(absolute, { recursive: false });
+    sendJson(res, 200, { ok: true });
+  } catch {
+    sendJson(res, 500, { error: 'No se pudo crear la carpeta.' });
+  }
+}
+
 function downloadFile(relative, res) {
   const absolute = resolveWorkspacePath(relative);
   if (!absolute) return sendJson(res, 400, { error: 'Ruta no permitida.' });
@@ -165,9 +188,13 @@ const server = http.createServer((req, res) => {
   if (url.pathname === '/api/files/download') {
     return downloadFile(url.searchParams.get('path') || '', res);
   }
+  if (url.pathname === '/api/files/mkdir' && req.method === 'POST') {
+    return makeDirectory(url.searchParams.get('path') || '', res);
+  }
   sendJson(res, 404, { error: 'No encontrado.' });
 });
 
+ensureSpecialFolders();
 server.listen(PORT, () => {
   console.log(`[ANDER API] escuchando en el puerto ${PORT}`);
 });

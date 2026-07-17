@@ -26,7 +26,7 @@ services:
     environment:
       - API_PORT=3300
     volumes:
-      - ./data/workspace:/workspace:ro
+      - ./data/workspace:/workspace
       - ./package.json:/repo/package.json:ro
       - ./.git:/repo/.git:ro
     restart: unless-stopped
