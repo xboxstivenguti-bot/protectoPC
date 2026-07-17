@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
-# Actualiza el editor al abrir el Codespace, pero no enciende la PC automáticamente.
+# Actualiza el editor al abrir el Codespace.
 if git diff --quiet && git diff --cached --quiet; then
   BRANCH="$(git branch --show-current 2>/dev/null || true)"
   if [ -n "$BRANCH" ]; then
@@ -19,4 +19,5 @@ if ! pgrep -f "scripts/auto-sync.sh" >/dev/null 2>&1; then
   nohup bash scripts/auto-sync.sh > /tmp/ander-auto-sync.log 2>&1 &
 fi
 
-echo "[ANDER] Abre start.js y pulsa Play para encender toda la PC."
+echo "[ANDER] Encendiendo la PC automáticamente en este Codespace..."
+node start.js
