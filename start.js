@@ -300,7 +300,6 @@ function startContainers() {
   run('docker', [
     'compose',
     'build',
-    '--pull',
     'powershell',
   ]);
   ok(`Imagen de PowerShell lista (${formatElapsed(Date.now() - buildStart)}).`);
