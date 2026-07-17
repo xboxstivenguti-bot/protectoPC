@@ -295,14 +295,22 @@ function startContainers() {
   run('docker', ['compose', 'pull']);
   ok(`Imágenes de Linux, Chromium, VS Code y Caddy listas (${formatElapsed(Date.now() - pullStart)}).`);
 
-  console.log('\n  Construyendo ANDER PowerShell con OpenCode permanente...');
-  const buildStart = Date.now();
-  run('docker', [
-    'compose',
-    'build',
-    'powershell',
-  ]);
-  ok(`Imagen de PowerShell lista (${formatElapsed(Date.now() - buildStart)}).`);
+  const imageCheck = run('docker', ['image', 'inspect', 'ander-powershell:v5'], {
+    quiet: true,
+    allowFailure: true,
+  });
+  if (imageCheck.status === 0) {
+    ok('Imagen de PowerShell ya está construida, se reutiliza sin reconstruir.');
+  } else {
+    console.log('\n  Construyendo ANDER PowerShell con OpenCode permanente...');
+    const buildStart = Date.now();
+    run('docker', [
+      'compose',
+      'build',
+      'powershell',
+    ]);
+    ok(`Imagen de PowerShell lista (${formatElapsed(Date.now() - buildStart)}).`);
+  }
 
   const upStart = Date.now();
   run('docker', [
