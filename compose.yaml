@@ -62,11 +62,26 @@ services:
           echo 'X-GNOME-Autostart-enabled=true'
           echo 'NoDisplay=true'
         } > /config/.config/autostart/ander-hide-panel.desktop
-        chown -R ${PUID:-1000}:${PGID:-1000} /config/.config/xfce4 /config/.config/autostart 2>/dev/null || true
+        mkdir -p /config/Desktop
+        {
+          echo '[Desktop Entry]'
+          echo 'Type=Application'
+          echo 'Name=Gestor de Aplicaciones'
+          echo 'Comment=Instala y administra programas de Linux (Synaptic)'
+          echo 'Exec=sudo /usr/sbin/synaptic'
+          echo 'Icon=synaptic'
+          echo 'Terminal=false'
+          echo 'Categories=System;PackageManager;'
+        } > /config/Desktop/synaptic.desktop
+        chmod +x /config/Desktop/synaptic.desktop
+        chown -R ${PUID:-1000}:${PGID:-1000} /config/.config/xfce4 /config/.config/autostart /config/Desktop 2>/dev/null || true
     restart: "no"
 
   linux:
-    image: lscr.io/linuxserver/webtop:debian-xfce
+    build:
+      context: ./linux
+    image: ander-linux:v1
+    pull_policy: never
     container_name: ander-linux
     depends_on:
       linux-clean:
