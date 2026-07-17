@@ -120,6 +120,17 @@ services:
         find /config -type f -name SingletonSocket -delete 2>/dev/null || true
         find /config -type f -name SingletonCookie -delete 2>/dev/null || true
         find /config -type f -name DevToolsActivePort -delete 2>/dev/null || true
+        mkdir -p /config/.config/openbox
+        {
+          echo '#!/bin/bash'
+          echo '('
+          echo '  while true; do'
+          echo '    wrapped-chromium $${CHROME_CLI}'
+          echo '    sleep 2'
+          echo '  done'
+          echo ') &'
+        } > /config/.config/openbox/autostart
+        chown -R ${PUID:-1000}:${PGID:-1000} /config/.config/openbox 2>/dev/null || true
         exit 0
     restart: "no"
 
