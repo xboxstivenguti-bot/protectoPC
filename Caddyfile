@@ -32,7 +32,7 @@
   handle {
     root * /srv
     header Cache-Control "no-cache"
-    try_files {path} /boot.html
+    try_files {path} {path}/index.html /boot.html
     file_server
   }
 }
