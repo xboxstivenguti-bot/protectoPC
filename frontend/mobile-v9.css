@@ -7,8 +7,8 @@
   box-shadow:0 22px 55px #000c!important;
 }
 .os-window.focused{
-  border-color:rgba(120,150,255,.6)!important;
-  box-shadow:0 26px 65px #000e,0 0 0 1px rgba(120,150,255,.35)!important;
+  border-color:rgba(255,255,255,.22)!important;
+  box-shadow:0 26px 65px #000e!important;
 }
 
 .winbar{
@@ -19,7 +19,7 @@
   padding:0 0 0 10px!important;
   cursor:move;
 }
-.os-window.focused .winbar{background:#26283a!important}
+.os-window.focused .winbar{background:#2a2a30!important}
 
 .winicon{
   width:16px!important;
