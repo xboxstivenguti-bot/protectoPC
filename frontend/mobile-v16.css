@@ -1,0 +1,37 @@
+/* ANDER CLOUD PC · Chromium sin ventana propia, pantalla completa v16 */
+
+.os-window.browser-fullscreen{
+  left:0!important;
+  top:0!important;
+  width:100%!important;
+  height:100%!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+.os-window.browser-fullscreen .winbar,
+.os-window.browser-fullscreen .resize-handle{display:none!important}
+.os-window.browser-fullscreen .winbody{height:100%!important}
+
+.browser-fullscreen-close{
+  position:absolute;
+  top:8px;
+  right:8px;
+  z-index:15;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(20,22,30,.5);
+  color:#fff;
+  font-size:17px;
+  line-height:1;
+  display:grid;
+  place-items:center;
+  opacity:.3;
+  transition:opacity .15s,background-color .15s;
+}
+@media(hover:hover){
+  .browser-fullscreen-close:hover{opacity:1;background:rgba(196,43,28,.85)}
+}
+.browser-fullscreen-close:active{opacity:1;background:rgba(196,43,28,.95)}
