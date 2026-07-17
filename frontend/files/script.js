@@ -16,30 +16,36 @@
   const viewIcon = document.querySelector('#viewIcon');
 
   const QUICK_ACCESS = [
-    { name: 'Escritorio', icon: '🖥️' },
-    { name: 'Descargas', icon: '⬇️' },
-    { name: 'Documentos', icon: '📄' },
-    { name: 'Imagenes', icon: '🖼️' },
-    { name: 'Musica', icon: '🎵' },
-    { name: 'Videos', icon: '🎬' },
+    { name: 'Escritorio', icon: 'monitor' },
+    { name: 'Descargas', icon: 'download' },
+    { name: 'Documentos', icon: 'file-text' },
+    { name: 'Imagenes', icon: 'image' },
+    { name: 'Musica', icon: 'music' },
+    { name: 'Videos', icon: 'video' },
   ];
 
   const ICONS_BY_EXT = {
-    png: '🖼️', jpg: '🖼️', jpeg: '🖼️', gif: '🖼️', webp: '🖼️', svg: '🖼️', bmp: '🖼️',
-    mp4: '🎬', mkv: '🎬', webm: '🎬', avi: '🎬', mov: '🎬',
-    mp3: '🎵', wav: '🎵', ogg: '🎵', flac: '🎵', m4a: '🎵',
-    xlsx: '📊', xls: '📊', csv: '📊',
-    pptx: '📽️', ppt: '📽️',
-    pdf: '📕',
-    zip: '🗜️', tar: '🗜️', gz: '🗜️', rar: '🗜️', '7z': '🗜️',
-    js: '📝', ts: '📝', py: '📝', json: '📝', html: '📝', css: '📝', sh: '📝', yml: '📝', yaml: '📝', md: '📝',
-    txt: '📄',
+    png: 'image', jpg: 'image', jpeg: 'image', gif: 'image', webp: 'image', svg: 'image', bmp: 'image',
+    mp4: 'video', mkv: 'video', webm: 'video', avi: 'video', mov: 'video',
+    mp3: 'music', wav: 'music', ogg: 'music', flac: 'music', m4a: 'music',
+    xlsx: 'table', xls: 'table', csv: 'table',
+    pptx: 'presentation', ppt: 'presentation',
+    pdf: 'file-text',
+    zip: 'archive', tar: 'archive', gz: 'archive', rar: 'archive', '7z': 'archive',
+    js: 'code', ts: 'code', py: 'code', json: 'code', html: 'code', css: 'code', sh: 'code', yml: 'code', yaml: 'code',
+    txt: 'file-text', md: 'file-text',
   };
 
-  function iconFor(item) {
-    if (item.type === 'dir') return '📁';
+  function iconFor(item, size) {
+    if (item.type === 'dir') return window.AnderIcons.svg('folder', size);
     const ext = item.name.includes('.') ? item.name.split('.').pop().toLowerCase() : '';
-    return ICONS_BY_EXT[ext] || '📄';
+    return window.AnderIcons.svg(ICONS_BY_EXT[ext] || 'file-text', size);
+  }
+
+  function hydrateIcons(root = document) {
+    root.querySelectorAll('[data-icon]').forEach((el) => {
+      el.innerHTML = window.AnderIcons.svg(el.dataset.icon, Number(el.dataset.iconSize) || 15);
+    });
   }
 
   function formatBytes(bytes) {
@@ -76,7 +82,10 @@
   function renderCrumbs(pathname) {
     crumbsEl.innerHTML = '';
     const rootButton = document.createElement('button');
-    rootButton.textContent = '🖥️ Este equipo';
+    rootButton.innerHTML = `${window.AnderIcons.svg('monitor', 13)} Este equipo`;
+    rootButton.style.display = 'inline-flex';
+    rootButton.style.alignItems = 'center';
+    rootButton.style.gap = '5px';
     rootButton.addEventListener('click', () => navigate(''));
     crumbsEl.appendChild(rootButton);
 
@@ -103,7 +112,7 @@
     for (const folder of QUICK_ACCESS) {
       const el = document.createElement('div');
       el.className = 'sidebar-item' + (pathname === `/${folder.name}` ? ' active' : '');
-      el.innerHTML = `<span class="si-icon">${folder.icon}</span><span>${folder.name}</span>`;
+      el.innerHTML = `<span class="si-icon">${window.AnderIcons.svg(folder.icon, 15)}</span><span>${folder.name}</span>`;
       el.addEventListener('click', () => navigate(`/${folder.name}`));
       quickAccessEl.appendChild(el);
     }
@@ -161,7 +170,7 @@
     itemCountEl.textContent = `${items.length} elemento${items.length === 1 ? '' : 's'}`;
     gridEl.hidden = state.viewMode !== 'grid';
     listEl.hidden = state.viewMode !== 'list';
-    viewIcon.textContent = state.viewMode === 'grid' ? '▦' : '☰';
+    viewIcon.innerHTML = window.AnderIcons.svg(state.viewMode === 'grid' ? 'layout-grid' : 'list', 15);
 
     if (!items.length) {
       const empty = '<div class="empty">Esta carpeta está vacía.</div>';
@@ -175,7 +184,7 @@
       for (const item of items) {
         const el = document.createElement('div');
         el.className = 'file-item';
-        el.innerHTML = `<span class="fi-icon">${iconFor(item)}</span><span class="fi-name">${item.name}</span>`;
+        el.innerHTML = `<span class="fi-icon">${iconFor(item, 32)}</span><span class="fi-name">${item.name}</span>`;
         el.addEventListener('click', () => selectItem(el, item));
         el.addEventListener('dblclick', () => openItem(item));
         gridEl.appendChild(el);
@@ -185,7 +194,7 @@
       for (const item of items) {
         const el = document.createElement('div');
         el.className = 'list-row';
-        el.innerHTML = `<span class="fi-icon">${iconFor(item)}</span><span class="fi-name">${item.name}</span><span class="fi-size">${item.type === 'file' ? formatBytes(item.size) : ''}</span>`;
+        el.innerHTML = `<span class="fi-icon">${iconFor(item, 17)}</span><span class="fi-name">${item.name}</span><span class="fi-size">${item.type === 'file' ? formatBytes(item.size) : ''}</span>`;
         el.addEventListener('click', () => selectItem(el, item));
         el.addEventListener('dblclick', () => openItem(item));
         listEl.appendChild(el);
@@ -308,5 +317,6 @@
 
   searchInput.addEventListener('input', render);
   window.addEventListener('hashchange', load);
+  hydrateIcons();
   load();
 })();

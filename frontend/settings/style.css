@@ -12,7 +12,9 @@ body.reduce-motion *{transition:none!important;animation:none!important}
 .nav-item{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:6px;color:var(--text)}
 .nav-item:hover{background:var(--sub)}
 .nav-item.active{background:rgba(0,120,212,.12);color:var(--accent)}
-.n-icon{font-size:15px;flex:0 0 auto}
+.n-icon{flex:0 0 auto;color:var(--accent)}
+.device-icon .ic,.c-label .ic{color:var(--accent)}
+.chev{color:var(--muted);display:flex}
 
 .content{flex:1;overflow-y:auto;padding:26px 34px;background:var(--bg)}
 .content h1{font-size:22px;font-weight:600;margin:0 0 18px}

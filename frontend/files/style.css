@@ -30,7 +30,8 @@ button{cursor:default}
 .sidebar-item{display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:5px;font-size:12.5px}
 .sidebar-item:hover{background:rgba(255,255,255,.06)}
 .sidebar-item.active{background:rgba(96,205,255,.15);color:var(--accent)}
-.si-icon{font-size:14px;flex:0 0 auto}
+.si-icon{flex:0 0 auto;color:var(--accent)}
+.tb-btn[data-action="new-folder"] .ic{color:var(--accent)}
 .storage-mini{padding:4px 8px 8px}
 .storage-mini .bar{height:6px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:4px}
 .storage-mini .bar-fill{height:100%;width:0;background:var(--accent)}
@@ -42,7 +43,16 @@ button{cursor:default}
 .file-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:6px;border:1px solid transparent}
 .file-item:hover{background:rgba(255,255,255,.06)}
 .file-item.selected{background:rgba(96,205,255,.16);border-color:rgba(96,205,255,.4)}
-.file-item .fi-icon{font-size:34px;line-height:1}
+.file-item .fi-icon{line-height:1}
+.fi-icon .ic-folder{color:#f5c842}
+.fi-icon .ic-image{color:#e0668f}
+.fi-icon .ic-video{color:#c43e1c}
+.fi-icon .ic-music{color:#a259d9}
+.fi-icon .ic-table{color:#2b9d4f}
+.fi-icon .ic-presentation{color:#e0762e}
+.fi-icon .ic-archive{color:#c9a227}
+.fi-icon .ic-code{color:#4ea6dc}
+.fi-icon .ic-file-text{color:#4a9eda}
 .file-item .fi-name{font-size:11px;text-align:center;line-height:1.25;word-break:break-word;max-width:100%}
 
 .list-view{display:flex;flex-direction:column}

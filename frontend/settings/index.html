@@ -9,17 +9,17 @@
 <body>
 <div class="app">
   <nav class="sidebar">
-    <div class="search-box"><span class="s-icon">🔍</span><input type="text" id="navSearch" placeholder="Buscar configuración"></div>
+    <div class="search-box"><span class="s-icon" data-icon="search"></span><input type="text" id="navSearch" placeholder="Buscar configuración"></div>
     <div class="nav-list" id="navList">
-      <div class="nav-item active" data-page="sistema"><span class="n-icon">🖥️</span><span>Sistema</span></div>
-      <div class="nav-item" data-page="red"><span class="n-icon">📶</span><span>Red e Internet</span></div>
-      <div class="nav-item" data-page="personalizacion"><span class="n-icon">🎨</span><span>Personalización</span></div>
-      <div class="nav-item" data-page="apps"><span class="n-icon">▦</span><span>Aplicaciones</span></div>
-      <div class="nav-item" data-page="cuentas"><span class="n-icon">👤</span><span>Cuentas</span></div>
-      <div class="nav-item" data-page="hora"><span class="n-icon">🕒</span><span>Hora e idioma</span></div>
-      <div class="nav-item" data-page="accesibilidad"><span class="n-icon">♿</span><span>Accesibilidad</span></div>
-      <div class="nav-item" data-page="privacidad"><span class="n-icon">🛡️</span><span>Privacidad</span></div>
-      <div class="nav-item" data-page="update"><span class="n-icon">🔄</span><span>Actualizaciones</span></div>
+      <div class="nav-item active" data-page="sistema"><span class="n-icon" data-icon="monitor"></span><span>Sistema</span></div>
+      <div class="nav-item" data-page="red"><span class="n-icon" data-icon="wifi"></span><span>Red e Internet</span></div>
+      <div class="nav-item" data-page="personalizacion"><span class="n-icon" data-icon="palette"></span><span>Personalización</span></div>
+      <div class="nav-item" data-page="apps"><span class="n-icon" data-icon="layout-grid"></span><span>Aplicaciones</span></div>
+      <div class="nav-item" data-page="cuentas"><span class="n-icon" data-icon="user"></span><span>Cuentas</span></div>
+      <div class="nav-item" data-page="hora"><span class="n-icon" data-icon="clock"></span><span>Hora e idioma</span></div>
+      <div class="nav-item" data-page="accesibilidad"><span class="n-icon" data-icon="accessibility"></span><span>Accesibilidad</span></div>
+      <div class="nav-item" data-page="privacidad"><span class="n-icon" data-icon="shield"></span><span>Privacidad</span></div>
+      <div class="nav-item" data-page="update"><span class="n-icon" data-icon="refresh-cw"></span><span>Actualizaciones</span></div>
     </div>
   </nav>
 
@@ -28,12 +28,12 @@
     <section class="page" id="page-sistema">
       <h1>Sistema</h1>
       <div class="sub-list">
-        <div class="sub-item" data-sub="pantalla"><span>Pantalla</span><span class="chev">›</span></div>
-        <div class="sub-item" data-sub="sonido"><span>Sonido</span><span class="chev">›</span></div>
-        <div class="sub-item" data-sub="notificaciones"><span>Notificaciones</span><span class="chev">›</span></div>
-        <div class="sub-item" data-sub="energia"><span>Energía y batería</span><span class="chev">›</span></div>
-        <div class="sub-item" data-sub="almacenamiento"><span>Almacenamiento</span><span class="chev">›</span></div>
-        <div class="sub-item" data-sub="info"><span>Información</span><span class="chev">›</span></div>
+        <div class="sub-item" data-sub="pantalla"><span>Pantalla</span><span class="chev" data-icon="chevron-right" data-icon-size="15"></span></div>
+        <div class="sub-item" data-sub="sonido"><span>Sonido</span><span class="chev" data-icon="chevron-right" data-icon-size="15"></span></div>
+        <div class="sub-item" data-sub="notificaciones"><span>Notificaciones</span><span class="chev" data-icon="chevron-right" data-icon-size="15"></span></div>
+        <div class="sub-item" data-sub="energia"><span>Energía y batería</span><span class="chev" data-icon="chevron-right" data-icon-size="15"></span></div>
+        <div class="sub-item" data-sub="almacenamiento"><span>Almacenamiento</span><span class="chev" data-icon="chevron-right" data-icon-size="15"></span></div>
+        <div class="sub-item" data-sub="info"><span>Información</span><span class="chev" data-icon="chevron-right" data-icon-size="15"></span></div>
       </div>
     </section>
 
@@ -44,7 +44,7 @@
       <div class="cards" id="infoCards"></div>
       <div class="box">
         <div class="device-row">
-          <div class="device-icon">💻</div>
+          <div class="device-icon" data-icon="laptop" data-icon-size="22"></div>
           <div><p class="device-name" id="deviceName">—</p><p class="device-sub">ANDER Cloud PC</p></div>
         </div>
       </div>
@@ -144,6 +144,7 @@
 
   </main>
 </div>
+<script src="/icons.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

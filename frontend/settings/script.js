@@ -89,11 +89,12 @@
 
     deviceName.textContent = systemData.system.hostname || NA;
 
+    const icon = (name) => window.AnderIcons.svg(name, 14);
     cards.innerHTML = `
-      <div class="card"><div class="c-label">🧠 Procesador</div><p class="c-value">${systemData.cpu.model || NA}</p><p class="c-sub">${systemData.cpu.cores ? systemData.cpu.cores + ' núcleos' : NA}</p></div>
-      <div class="card"><div class="c-label">💾 RAM instalada</div><p class="c-value">${formatBytes(systemData.memory.totalBytes)}</p><p class="c-sub">${formatBytes(systemData.memory.freeBytes)} libres</p></div>
-      <div class="card"><div class="c-label">🎮 Tarjeta gráfica</div><p class="c-value">${NA}</p><p class="c-sub">Los contenedores no exponen la GPU del equipo</p></div>
-      <div class="card"><div class="c-label">💽 Almacenamiento</div><p class="c-value">${systemData.storage.workspace ? formatBytes(systemData.storage.workspace.totalBytes) : NA}</p><p class="c-sub">${systemData.storage.workspace ? formatBytes(systemData.storage.workspace.usedBytes) + ' usados' : ''}</p></div>
+      <div class="card"><div class="c-label">${icon('cpu')} Procesador</div><p class="c-value">${systemData.cpu.model || NA}</p><p class="c-sub">${systemData.cpu.cores ? systemData.cpu.cores + ' núcleos' : NA}</p></div>
+      <div class="card"><div class="c-label">${icon('memory-stick')} RAM instalada</div><p class="c-value">${formatBytes(systemData.memory.totalBytes)}</p><p class="c-sub">${formatBytes(systemData.memory.freeBytes)} libres</p></div>
+      <div class="card"><div class="c-label">${icon('monitor')} Tarjeta gráfica</div><p class="c-value">${NA}</p><p class="c-sub">Los contenedores no exponen la GPU del equipo</p></div>
+      <div class="card"><div class="c-label">${icon('hard-drive')} Almacenamiento</div><p class="c-value">${systemData.storage.workspace ? formatBytes(systemData.storage.workspace.totalBytes) : NA}</p><p class="c-sub">${systemData.storage.workspace ? formatBytes(systemData.storage.workspace.usedBytes) + ' usados' : ''}</p></div>
     `;
 
     specs.innerHTML = '';
@@ -289,6 +290,13 @@
     specRow(specs, '¿No rastrear?', navigator.doNotTrack === '1' ? 'Activado' : 'Sin preferencia');
   }
 
+  function hydrateIcons(root = document) {
+    root.querySelectorAll('[data-icon]').forEach((el) => {
+      el.innerHTML = window.AnderIcons.svg(el.dataset.icon, Number(el.dataset.iconSize) || 16);
+    });
+  }
+
+  hydrateIcons();
   loadSystemInfo();
   fillDisplay();
   setupSound();
