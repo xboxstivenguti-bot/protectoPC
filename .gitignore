@@ -1,5 +1,10 @@
 # Secretos y configuración local
 .env
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+*.ppk
 
 # Datos persistentes de los contenedores
 /data/*

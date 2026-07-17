@@ -6,6 +6,7 @@
   "main": "start.js",
   "scripts": {
     "start": "node start.js",
+    "phone": "node scripts/phone.js",
     "stop": "docker compose down --remove-orphans",
     "status": "docker compose ps",
     "logs": "docker compose logs -f --tail=150"

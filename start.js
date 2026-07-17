@@ -159,6 +159,11 @@ function syncRepository() {
     return;
   }
 
+  const remoteUrl = output('git', ['remote', 'get-url', 'origin']);
+  if (remoteUrl && !remoteUrl.startsWith('git@github.com:')) {
+    warn(`El remoto "origin" no usa SSH (${remoteUrl}). El push puede fallar si HTTPS está bloqueado. Corrige con: git remote set-url origin git@github.com:xboxstivenguti-bot/protectoPC.git`);
+  }
+
   const branch = output('git', ['branch', '--show-current']);
   if (!branch) {
     warn('Git está en modo detached HEAD. No se hará pull automático.');
@@ -208,6 +213,7 @@ function syncRepository() {
     ok('Cambios remotos aplicados.');
   } else {
     warn('Hay commits locales y remotos que divergieron. No se hará push ni merge automático (revísalo a mano para no perder trabajo).');
+    run('git', ['status'], { allowFailure: true });
   }
 }
 
