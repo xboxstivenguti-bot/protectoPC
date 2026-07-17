@@ -16,7 +16,7 @@
     "8080": {
       "label": "ANDER CLOUD PC",
       "onAutoForward": "notify",
-      "visibility": "private"
+      "visibility": "public"
     }
   },
   "postCreateCommand": "cp -n .env.example .env || true && chmod +x start.sh stop.sh scripts/*.sh",
