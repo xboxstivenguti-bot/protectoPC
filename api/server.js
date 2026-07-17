@@ -129,7 +129,7 @@ function listDirectory(relative, res) {
   });
 }
 
-const SPECIAL_FOLDERS = ['Escritorio', 'Documentos', 'Imagenes', 'Videos', 'Descargas'];
+const SPECIAL_FOLDERS = ['Escritorio', 'Documentos', 'Imagenes', 'Musica', 'Videos', 'Descargas'];
 
 function ensureSpecialFolders() {
   for (const name of SPECIAL_FOLDERS) {
@@ -149,6 +149,75 @@ function makeDirectory(relative, res) {
     sendJson(res, 200, { ok: true });
   } catch {
     sendJson(res, 500, { error: 'No se pudo crear la carpeta.' });
+  }
+}
+
+function makeFile(relative, res) {
+  const absolute = resolveWorkspacePath(relative);
+  if (!absolute || absolute === WORKSPACE_ROOT) return sendJson(res, 400, { error: 'Ruta no permitida.' });
+  if (fs.existsSync(absolute)) return sendJson(res, 409, { error: 'Ya existe algo con ese nombre.' });
+  try {
+    fs.writeFileSync(absolute, '');
+    sendJson(res, 200, { ok: true });
+  } catch {
+    sendJson(res, 500, { error: 'No se pudo crear el archivo.' });
+  }
+}
+
+function uniqueDestination(absolute) {
+  if (!fs.existsSync(absolute)) return absolute;
+  const dir = path.dirname(absolute);
+  const ext = path.extname(absolute);
+  const base = path.basename(absolute, ext);
+  for (let n = 1; n < 1000; n++) {
+    const candidate = path.join(dir, `${base} (${n})${ext}`);
+    if (!fs.existsSync(candidate)) return candidate;
+  }
+  return null;
+}
+
+function renameEntry(fromRelative, toRelative, res) {
+  const fromAbsolute = resolveWorkspacePath(fromRelative);
+  const toAbsolute = resolveWorkspacePath(toRelative);
+  if (!fromAbsolute || !toAbsolute || fromAbsolute === WORKSPACE_ROOT) return sendJson(res, 400, { error: 'Ruta no permitida.' });
+  if (!fs.existsSync(fromAbsolute)) return sendJson(res, 404, { error: 'No se encontró el elemento original.' });
+  if (fs.existsSync(toAbsolute)) return sendJson(res, 409, { error: 'Ya existe algo con ese nombre.' });
+  try {
+    fs.renameSync(fromAbsolute, toAbsolute);
+    sendJson(res, 200, { ok: true });
+  } catch {
+    sendJson(res, 500, { error: 'No se pudo renombrar.' });
+  }
+}
+
+function moveEntry(fromRelative, toDirRelative, res, { copy }) {
+  const fromAbsolute = resolveWorkspacePath(fromRelative);
+  const toDirAbsolute = resolveWorkspacePath(toDirRelative);
+  if (!fromAbsolute || !toDirAbsolute || fromAbsolute === WORKSPACE_ROOT) return sendJson(res, 400, { error: 'Ruta no permitida.' });
+  if (!fs.existsSync(fromAbsolute)) return sendJson(res, 404, { error: 'No se encontró el elemento original.' });
+  const destination = uniqueDestination(path.join(toDirAbsolute, path.basename(fromAbsolute)));
+  if (!destination) return sendJson(res, 409, { error: 'No se pudo generar un nombre libre.' });
+  try {
+    if (copy) {
+      fs.cpSync(fromAbsolute, destination, { recursive: true });
+    } else {
+      fs.renameSync(fromAbsolute, destination);
+    }
+    sendJson(res, 200, { ok: true, name: path.basename(destination) });
+  } catch {
+    sendJson(res, 500, { error: copy ? 'No se pudo copiar.' : 'No se pudo mover.' });
+  }
+}
+
+function deleteEntry(relative, res) {
+  const absolute = resolveWorkspacePath(relative);
+  if (!absolute || absolute === WORKSPACE_ROOT) return sendJson(res, 400, { error: 'Ruta no permitida.' });
+  if (!fs.existsSync(absolute)) return sendJson(res, 404, { error: 'No se encontró el elemento.' });
+  try {
+    fs.rmSync(absolute, { recursive: true, force: true });
+    sendJson(res, 200, { ok: true });
+  } catch {
+    sendJson(res, 500, { error: 'No se pudo eliminar.' });
   }
 }
 
@@ -190,6 +259,21 @@ const server = http.createServer((req, res) => {
   }
   if (url.pathname === '/api/files/mkdir' && req.method === 'POST') {
     return makeDirectory(url.searchParams.get('path') || '', res);
+  }
+  if (url.pathname === '/api/files/touch' && req.method === 'POST') {
+    return makeFile(url.searchParams.get('path') || '', res);
+  }
+  if (url.pathname === '/api/files/rename' && req.method === 'POST') {
+    return renameEntry(url.searchParams.get('from') || '', url.searchParams.get('to') || '', res);
+  }
+  if (url.pathname === '/api/files/copy' && req.method === 'POST') {
+    return moveEntry(url.searchParams.get('from') || '', url.searchParams.get('toDir') || '', res, { copy: true });
+  }
+  if (url.pathname === '/api/files/move' && req.method === 'POST') {
+    return moveEntry(url.searchParams.get('from') || '', url.searchParams.get('toDir') || '', res, { copy: false });
+  }
+  if (url.pathname === '/api/files/delete' && req.method === 'POST') {
+    return deleteEntry(url.searchParams.get('path') || '', res);
   }
   sendJson(res, 404, { error: 'No encontrado.' });
 });

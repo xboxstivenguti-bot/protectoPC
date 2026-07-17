@@ -3,17 +3,55 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Archivos · ANDER</title>
+<title>Explorador de archivos</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="bar">
-  <nav class="crumbs" id="crumbs" aria-label="Ruta"></nav>
-  <button type="button" class="new-folder" id="newFolderButton">+ Carpeta</button>
-</header>
-<section class="quick-access" id="quickAccess"></section>
-<section class="storage-card" id="storageCard"></section>
-<main class="list" id="list"></main>
+<div class="toolbar">
+  <button type="button" class="tb-btn" data-action="new-folder"><span class="tb-icon">📁</span>Nuevo</button>
+  <span class="tb-sep"></span>
+  <button type="button" class="tb-btn" data-action="cut"><span class="tb-icon">✂️</span>Cortar</button>
+  <button type="button" class="tb-btn" data-action="copy"><span class="tb-icon">📄</span>Copiar</button>
+  <button type="button" class="tb-btn" data-action="paste"><span class="tb-icon">📋</span>Pegar</button>
+  <button type="button" class="tb-btn" data-action="rename"><span class="tb-icon">✏️</span>Renombrar</button>
+  <button type="button" class="tb-btn" data-action="delete"><span class="tb-icon">🗑️</span>Eliminar</button>
+  <span class="tb-sep"></span>
+  <button type="button" class="tb-btn" data-action="sort"><span class="tb-icon">↕️</span>Ordenar</button>
+  <button type="button" class="tb-btn" data-action="view"><span class="tb-icon" id="viewIcon">▦</span>Ver</button>
+</div>
+
+<div class="addressbar">
+  <div class="nav-arrows">
+    <button type="button" class="nav-btn" id="backButton" title="Atrás">←</button>
+    <button type="button" class="nav-btn" id="upButton" title="Subir">↑</button>
+  </div>
+  <div class="crumbs" id="crumbs"></div>
+  <div class="search-box">
+    <span class="tb-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Buscar en esta carpeta">
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar">
+    <p class="sidebar-title">Acceso rápido</p>
+    <div id="quickAccess"></div>
+    <p class="sidebar-title">Este equipo</p>
+    <div class="sidebar-item" id="storageEntry"><span class="si-icon">💽</span><span>Almacenamiento</span></div>
+    <div class="storage-mini" id="storageMini"></div>
+  </nav>
+
+  <main class="content">
+    <p class="section-title" id="sectionTitle">Inicio</p>
+    <div class="grid" id="grid"></div>
+    <div class="list-view" id="listView" hidden></div>
+  </main>
+</div>
+
+<footer class="statusbar">
+  <span id="itemCount">0 elementos</span>
+  <span id="clipboardStatus"></span>
+</footer>
 <script src="script.js"></script>
 </body>
 </html>

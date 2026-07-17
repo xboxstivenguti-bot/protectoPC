@@ -193,14 +193,33 @@
 
   syncReduceMotion();
 
-  /* --- Puente de apariencia: recibe el color de acento desde /settings/ --- */
+  /* --- Puente de apariencia: recibe ajustes desde /settings/ --- */
   window.addEventListener('message',event=>{
     const data=event.data;
-    if(!data||data.type!=='ander-appearance')return;
+    if(!data)return;
+    if(data.type==='ander-volume'&&Number.isFinite(data.value)){
+      volumeInput.value=String(data.value);
+      paintVolumeChip(data.value);
+      applyVolume(data.value);
+      return;
+    }
+    if(data.type!=='ander-appearance')return;
     if(data.accent)document.documentElement.style.setProperty('--a',data.accent);
     if(data.reduceMotion!=null){
       localStorage.setItem('ander-reduce-motion',data.reduceMotion?'1':'0');
       syncReduceMotion();
+    }
+    if(data.powerSaver!=null){
+      localStorage.setItem('ander-power-saver',data.powerSaver?'1':'0');
+      syncReduceMotion();
+    }
+    if(data.highContrast!=null){
+      localStorage.setItem('ander-high-contrast',data.highContrast?'1':'0');
+      document.documentElement.classList.toggle('ander-high-contrast',data.highContrast);
+    }
+    if(data.largeText!=null){
+      localStorage.setItem('ander-large-text',data.largeText?'1':'0');
+      document.documentElement.classList.toggle('ander-large-text',data.largeText);
     }
   });
 })();

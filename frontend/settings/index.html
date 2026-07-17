@@ -3,71 +3,147 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Configuración · ANDER</title>
+<title>Configuración</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="settings">
-  <h1>Configuración</h1>
-
-  <section class="card" id="sec-system">
-    <h2>Sistema</h2>
-    <dl class="rows" id="rows-system"></dl>
-  </section>
-
-  <section class="card" id="sec-cpu">
-    <h2>CPU</h2>
-    <dl class="rows" id="rows-cpu"></dl>
-  </section>
-
-  <section class="card" id="sec-memory">
-    <h2>Memoria</h2>
-    <dl class="rows" id="rows-memory"></dl>
-    <div class="bar"><div class="bar-fill" id="memory-bar"></div></div>
-  </section>
-
-  <section class="card" id="sec-storage">
-    <h2>Almacenamiento (/workspace)</h2>
-    <dl class="rows" id="rows-storage"></dl>
-    <div class="bar"><div class="bar-fill" id="storage-bar"></div></div>
-  </section>
-
-  <section class="card" id="sec-datetime">
-    <h2>Fecha y hora</h2>
-    <dl class="rows" id="rows-datetime"></dl>
-  </section>
-
-  <section class="card" id="sec-network">
-    <h2>Red</h2>
-    <dl class="rows" id="rows-network"></dl>
-  </section>
-
-  <section class="card" id="sec-appearance">
-    <h2>Apariencia</h2>
-    <div class="appearance-controls">
-      <label class="field">
-        <span>Modo</span>
-        <select id="appearance-theme">
-          <option value="dark">Oscuro</option>
-          <option value="light">Claro</option>
-        </select>
-      </label>
-      <label class="field">
-        <span>Color de acento</span>
-        <input type="color" id="appearance-accent" value="#438cff">
-      </label>
-      <label class="field field-check">
-        <input type="checkbox" id="appearance-reduce-motion">
-        <span>Reducir movimiento</span>
-      </label>
+<div class="app">
+  <nav class="sidebar">
+    <div class="search-box"><span class="s-icon">🔍</span><input type="text" id="navSearch" placeholder="Buscar configuración"></div>
+    <div class="nav-list" id="navList">
+      <div class="nav-item active" data-page="sistema"><span class="n-icon">🖥️</span><span>Sistema</span></div>
+      <div class="nav-item" data-page="red"><span class="n-icon">📶</span><span>Red e Internet</span></div>
+      <div class="nav-item" data-page="personalizacion"><span class="n-icon">🎨</span><span>Personalización</span></div>
+      <div class="nav-item" data-page="apps"><span class="n-icon">▦</span><span>Aplicaciones</span></div>
+      <div class="nav-item" data-page="cuentas"><span class="n-icon">👤</span><span>Cuentas</span></div>
+      <div class="nav-item" data-page="hora"><span class="n-icon">🕒</span><span>Hora e idioma</span></div>
+      <div class="nav-item" data-page="accesibilidad"><span class="n-icon">♿</span><span>Accesibilidad</span></div>
+      <div class="nav-item" data-page="privacidad"><span class="n-icon">🛡️</span><span>Privacidad</span></div>
+      <div class="nav-item" data-page="update"><span class="n-icon">🔄</span><span>Actualizaciones</span></div>
     </div>
-  </section>
+  </nav>
 
-  <section class="card" id="sec-about">
-    <h2>Acerca de</h2>
-    <dl class="rows" id="rows-about"></dl>
-  </section>
-</main>
+  <main class="content">
+
+    <section class="page" id="page-sistema">
+      <h1>Sistema</h1>
+      <div class="sub-list">
+        <div class="sub-item" data-sub="pantalla"><span>Pantalla</span><span class="chev">›</span></div>
+        <div class="sub-item" data-sub="sonido"><span>Sonido</span><span class="chev">›</span></div>
+        <div class="sub-item" data-sub="notificaciones"><span>Notificaciones</span><span class="chev">›</span></div>
+        <div class="sub-item" data-sub="energia"><span>Energía y batería</span><span class="chev">›</span></div>
+        <div class="sub-item" data-sub="almacenamiento"><span>Almacenamiento</span><span class="chev">›</span></div>
+        <div class="sub-item" data-sub="info"><span>Información</span><span class="chev">›</span></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-info" hidden>
+      <button type="button" class="back-btn" data-back="sistema">← Atrás</button>
+      <h1>Información</h1>
+      <p class="breadcrumb">Sistema › Información</p>
+      <div class="cards" id="infoCards"></div>
+      <div class="box">
+        <div class="device-row">
+          <div class="device-icon">💻</div>
+          <div><p class="device-name" id="deviceName">—</p><p class="device-sub">ANDER Cloud PC</p></div>
+        </div>
+      </div>
+      <div class="box">
+        <h3>Detalles del dispositivo</h3>
+        <div class="spec-list" id="deviceSpecs"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-pantalla" hidden>
+      <button type="button" class="back-btn" data-back="sistema">← Atrás</button>
+      <h1>Pantalla</h1>
+      <div class="box"><div class="spec-list" id="displaySpecs"></div></div>
+    </section>
+
+    <section class="page" id="page-sonido" hidden>
+      <button type="button" class="back-btn" data-back="sistema">← Atrás</button>
+      <h1>Sonido</h1>
+      <div class="box">
+        <label class="field-row"><span>Volumen de los streams de ANDER</span><input type="range" id="soundVolume" min="0" max="100" step="5"></label>
+      </div>
+    </section>
+
+    <section class="page" id="page-notificaciones" hidden>
+      <button type="button" class="back-btn" data-back="sistema">← Atrás</button>
+      <h1>Notificaciones</h1>
+      <div class="box">
+        <div class="spec-row"><span>Permiso del navegador</span><span id="notifPermission">—</span></div>
+        <button type="button" class="action-btn" id="notifRequest">Solicitar permiso</button>
+      </div>
+    </section>
+
+    <section class="page" id="page-energia" hidden>
+      <button type="button" class="back-btn" data-back="sistema">← Atrás</button>
+      <h1>Energía y batería</h1>
+      <div class="box" id="batteryBox"></div>
+      <div class="box">
+        <label class="field-row"><input type="checkbox" id="powerSaverToggle"><span>Ahorro de energía ANDER (menos animación)</span></label>
+      </div>
+    </section>
+
+    <section class="page" id="page-almacenamiento" hidden>
+      <button type="button" class="back-btn" data-back="sistema">← Atrás</button>
+      <h1>Almacenamiento</h1>
+      <div class="box" id="storageBox"></div>
+    </section>
+
+    <section class="page" id="page-red" hidden>
+      <h1>Red e Internet</h1>
+      <div class="box"><div class="spec-list" id="networkSpecs"></div></div>
+    </section>
+
+    <section class="page" id="page-personalizacion" hidden>
+      <h1>Personalización</h1>
+      <div class="box">
+        <label class="field-row"><span>Modo</span>
+          <select id="themeSelect"><option value="dark">Oscuro</option><option value="light">Claro</option></select>
+        </label>
+        <label class="field-row"><span>Color de acento</span><input type="color" id="accentInput"></label>
+        <label class="field-row"><input type="checkbox" id="reduceMotionToggle"><span>Reducir movimiento</span></label>
+      </div>
+    </section>
+
+    <section class="page" id="page-apps" hidden>
+      <h1>Aplicaciones</h1>
+      <div class="box"><div class="spec-list" id="appsList"></div></div>
+    </section>
+
+    <section class="page" id="page-cuentas" hidden>
+      <h1>Cuentas</h1>
+      <div class="box"><p class="muted">ANDER Cloud PC no tiene un sistema de cuentas múltiples: es un solo usuario protegido por la contraseña de <code>.env</code>. No hay más datos reales que mostrar aquí.</p></div>
+    </section>
+
+    <section class="page" id="page-hora" hidden>
+      <h1>Hora e idioma</h1>
+      <div class="box"><div class="spec-list" id="dateSpecs"></div></div>
+    </section>
+
+    <section class="page" id="page-accesibilidad" hidden>
+      <h1>Accesibilidad</h1>
+      <div class="box">
+        <label class="field-row"><input type="checkbox" id="highContrastToggle"><span>Alto contraste</span></label>
+        <label class="field-row"><input type="checkbox" id="largeTextToggle"><span>Texto grande</span></label>
+        <label class="field-row"><input type="checkbox" id="reduceMotionToggle2"><span>Reducir movimiento</span></label>
+      </div>
+    </section>
+
+    <section class="page" id="page-privacidad" hidden>
+      <h1>Privacidad</h1>
+      <div class="box"><div class="spec-list" id="privacySpecs"></div></div>
+    </section>
+
+    <section class="page" id="page-update" hidden>
+      <h1>Actualizaciones</h1>
+      <div class="box"><div class="spec-list" id="updateSpecs"></div></div>
+    </section>
+
+  </main>
+</div>
 <script src="script.js"></script>
 </body>
 </html>
