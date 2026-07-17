@@ -1,0 +1,67 @@
+/* ANDER CLOUD PC · Chips adicionales + panel rápido v11 */
+
+.device-chip.lang-chip,.device-chip.mic-chip{min-width:22px}
+.device-chip.mic-chip[data-state="denied"]{opacity:.4}
+.device-chip.volume-chip{cursor:inherit}
+
+.task-device-status{cursor:pointer}
+@media(hover:hover){.task-device-status:hover{background:rgba(255,255,255,.09)!important}}
+.task-device-status:active{background:rgba(255,255,255,.14)!important}
+
+.quick-panel-backdrop{
+  position:fixed;inset:0;z-index:200;
+  background:transparent;
+  display:none;
+}
+.quick-panel-backdrop.open{display:block}
+
+.quick-panel{
+  position:absolute;
+  right:10px;
+  bottom:56px;
+  width:min(320px,calc(100vw - 20px));
+  max-height:min(560px,calc(100vh - 80px));
+  overflow:auto;
+  background:rgba(24,26,34,.96);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  box-shadow:0 30px 70px #000c;
+  padding:14px;
+  color:#f0f2f8;
+  font-family:"Segoe UI",system-ui,sans-serif;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.qp-toggles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qp-toggle{
+  display:flex;align-items:center;gap:8px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;background:rgba(255,255,255,.05);
+  padding:9px 10px;font-size:11.5px;text-align:left;color:#f0f2f8;
+}
+.qp-toggle .qp-icon{font-size:15px;flex:0 0 auto}
+.qp-toggle .qp-label{flex:1;line-height:1.2}
+.qp-toggle .qp-state{font-size:9.5px;color:#9aa3b5}
+.qp-toggle.on{background:rgba(67,140,255,.28);border-color:rgba(120,160,255,.5)}
+.qp-toggle.disabled{opacity:.45;pointer-events:none}
+
+.qp-sliders{display:flex;flex-direction:column;gap:10px}
+.qp-slider{display:flex;flex-direction:column;gap:4px;font-size:11px;color:#9aa3b5}
+.qp-slider input[type="range"]{width:100%}
+
+.qp-section-title{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:#7d8598;margin:2px 0 -2px}
+
+.ander-airplane-banner{
+  position:absolute;top:8px;left:50%;transform:translateX(-50%);
+  z-index:130;background:#1c2030ee;border:1px solid rgba(255,255,255,.15);
+  border-radius:999px;padding:5px 14px;font-size:10.5px;color:#f0f2f8;
+  display:none;
+}
+body.ander-airplane-mode .ander-airplane-banner{display:block}
+
+html.ander-reduce-motion *{transition:none!important;animation:none!important}
+html.ander-high-contrast{filter:contrast(1.25)}
+html.ander-large-text .task-app,html.ander-large-text .wintitle{font-size:12px!important}

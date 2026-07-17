@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Configuración · ANDER</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="settings">
+  <h1>Configuración</h1>
+
+  <section class="card" id="sec-system">
+    <h2>Sistema</h2>
+    <dl class="rows" id="rows-system"></dl>
+  </section>
+
+  <section class="card" id="sec-cpu">
+    <h2>CPU</h2>
+    <dl class="rows" id="rows-cpu"></dl>
+  </section>
+
+  <section class="card" id="sec-memory">
+    <h2>Memoria</h2>
+    <dl class="rows" id="rows-memory"></dl>
+    <div class="bar"><div class="bar-fill" id="memory-bar"></div></div>
+  </section>
+
+  <section class="card" id="sec-storage">
+    <h2>Almacenamiento (/workspace)</h2>
+    <dl class="rows" id="rows-storage"></dl>
+    <div class="bar"><div class="bar-fill" id="storage-bar"></div></div>
+  </section>
+
+  <section class="card" id="sec-datetime">
+    <h2>Fecha y hora</h2>
+    <dl class="rows" id="rows-datetime"></dl>
+  </section>
+
+  <section class="card" id="sec-network">
+    <h2>Red</h2>
+    <dl class="rows" id="rows-network"></dl>
+  </section>
+
+  <section class="card" id="sec-appearance">
+    <h2>Apariencia</h2>
+    <div class="appearance-controls">
+      <label class="field">
+        <span>Modo</span>
+        <select id="appearance-theme">
+          <option value="dark">Oscuro</option>
+          <option value="light">Claro</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Color de acento</span>
+        <input type="color" id="appearance-accent" value="#438cff">
+      </label>
+      <label class="field field-check">
+        <input type="checkbox" id="appearance-reduce-motion">
+        <span>Reducir movimiento</span>
+      </label>
+    </div>
+  </section>
+
+  <section class="card" id="sec-about">
+    <h2>Acerca de</h2>
+    <dl class="rows" id="rows-about"></dl>
+  </section>
+</main>
+<script src="script.js"></script>
+</body>
+</html>

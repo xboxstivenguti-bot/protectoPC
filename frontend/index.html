@@ -51,8 +51,8 @@ const routes={
  browser:{title:'Chromium',url:'/browser/',icon:'/icons/chromium.svg'},
  code:{title:'Visual Studio Code',url:'/code/',icon:'/icons/vscode.svg'},
  powershell:{title:'PowerShell 7',url:'/powershell/',icon:'/icons/powershell.svg'},
- files:{title:'Archivos Linux',url:'/linux/',icon:'/icons/files.svg'},
- settings:{title:'Configuración',url:'/linux/',icon:'/icons/settings.svg'}
+ files:{title:'Archivos Linux',url:'/files/',icon:'/icons/files.svg'},
+ settings:{title:'Configuración',url:'/settings/',icon:'/icons/settings.svg'}
 };
 const scene=document.querySelector('#scene'),screen=document.querySelector('#screen'),power=document.querySelector('#power'),desktopIcons=document.querySelector('#desktopIcons'),windowLayer=document.querySelector('#windowLayer'),taskApps=document.querySelector('#taskApps'),startApps=document.querySelector('#startApps'),startMenu=document.querySelector('#startMenu'),snapAssist=document.querySelector('#snapAssist'),snapPreview=document.querySelector('#snapPreview'),cursor=document.querySelector('#cursor'),trackpad=document.querySelector('#trackpad'),keyboard=document.querySelector('#keyboard'),nativeInput=document.querySelector('#nativeInput');
 let windows=new Map(),activeId=null,zCounter=30,spawnOffset=0,dragState=null,resizeState=null,snapChoice=null;

@@ -17,6 +17,10 @@
     reverse_proxy powershell:7681
   }
 
+  handle /api/* {
+    reverse_proxy api:3300
+  }
+
   @root path /
   handle @root {
     root * /srv
