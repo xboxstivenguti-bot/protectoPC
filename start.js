@@ -29,6 +29,16 @@ const CONTAINERS = [
 
 process.chdir(ROOT);
 
+const START_TIME = Date.now();
+
+function formatElapsed(ms) {
+  const seconds = ms / 1000;
+  if (seconds < 60) return `${seconds.toFixed(1)}s`;
+  const minutes = Math.floor(seconds / 60);
+  const rest = Math.round(seconds % 60);
+  return `${minutes}m ${rest}s`;
+}
+
 function title(text) {
   console.log(`\n\x1b[1m\x1b[36m${text}\x1b[0m`);
 }
@@ -50,6 +60,13 @@ function sleep(ms) {
 }
 
 function commandExists(command) {
+  // En Windows, delegar en "bash" puede resolver por PATH al bash.exe de WSL
+  // en vez del de Git, y lanzar WSL desde un proceso hijo sin consola propia
+  // puede quedarse colgado esperando indefinidamente. "where" es nativo de
+  // Windows y no tiene ese riesgo. En Linux/Codespaces se conserva "bash".
+  if (process.platform === 'win32') {
+    return spawnSync('where', [command], { stdio: 'ignore' }).status === 0;
+  }
   return spawnSync('bash', ['-lc', `command -v ${command}`], {
     stdio: 'ignore',
   }).status === 0;
@@ -148,24 +165,49 @@ function syncRepository() {
     return;
   }
 
-  run('git', ['fetch', 'origin', branch], { allowFailure: true });
-
-  if (!isGitClean()) {
-    warn('Hay cambios locales sin guardar. No se hará pull para no pisarlos.');
-    return;
+  const fetchResult = run('git', ['fetch', 'origin', branch], { allowFailure: true, quiet: true });
+  const canReachRemote = fetchResult.status === 0;
+  if (!canReachRemote) {
+    warn('No se pudo contactar GitHub (sin internet, VPN/antivirus bloqueando HTTPS, o el repo no responde). Se continúa con la copia local.');
   }
+
+  // Cualquier cambio local (tuyo o de un asistente) se guarda en un commit
+  // propio antes de intentar subir o traer nada, para nunca perderlo.
+  if (!isGitClean()) {
+    run('git', ['add', '.']);
+    const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+    run('git', ['commit', '-m', `Actualización automática ANDER CLOUD PC ${stamp}`]);
+    ok('Cambios locales guardados en un commit.');
+  }
+
+  if (!canReachRemote) return;
 
   const local = output('git', ['rev-parse', 'HEAD']);
   const remote = output('git', ['rev-parse', `origin/${branch}`]);
+
+  if (!remote) {
+    run('git', ['push', '-u', 'origin', branch]);
+    ok('Rama publicada en GitHub por primera vez.');
+    return;
+  }
+
+  if (local === remote) {
+    ok('El editor ya está actualizado.');
+    return;
+  }
+
   const base = output('git', ['merge-base', 'HEAD', `origin/${branch}`]);
 
-  if (local && remote && local === base && local !== remote) {
+  if (base === remote) {
+    // El remoto es un ancestro del local: hay commits propios listos para subir.
+    run('git', ['push', 'origin', branch]);
+    ok('Cambios subidos a GitHub.');
+  } else if (base === local) {
+    // El local es un ancestro del remoto: hay commits nuevos por traer.
     run('git', ['pull', '--ff-only', 'origin', branch]);
     ok('Cambios remotos aplicados.');
-  } else if (local === remote) {
-    ok('El editor ya está actualizado.');
-  } else if (local && remote && local !== remote) {
-    warn('Hay commits locales o ramas divergentes. No se hará merge automático.');
+  } else {
+    warn('Hay commits locales y remotos que divergieron. No se hará push ni merge automático (revísalo a mano para no perder trabajo).');
   }
 }
 
@@ -214,37 +256,56 @@ function stopPreviousSession(port) {
 
 async function waitForDocker(timeoutMs = 60000) {
   title('4/7 · Verificando Docker');
+  const inCodespace = Boolean(process.env.CODESPACE_NAME);
+
   if (!commandExists('docker')) {
-    throw new Error('Docker no está instalado. Reconstruye el Codespace con “Codespaces: Rebuild Container”.');
+    const hint = inCodespace
+      ? 'Reconstruye el Codespace con “Codespaces: Rebuild Container”.'
+      : 'Instala Docker Desktop, ábrelo y espera a que termine de iniciar, luego vuelve a ejecutar este script.';
+    throw new Error(`Docker no está instalado o no está en el PATH. ${hint}`);
   }
 
-  const deadline = Date.now() + timeoutMs;
+  const started = Date.now();
+  let lastNotice = 0;
+  const deadline = started + timeoutMs;
   while (Date.now() < deadline) {
     const result = run('docker', ['info'], { quiet: true, allowFailure: true });
     if (result.status === 0) {
-      ok('Docker está listo.');
+      if (lastNotice) process.stdout.write('\r' + ' '.repeat(50) + '\r');
+      ok(`Docker está listo (${formatElapsed(Date.now() - started)}).`);
       return;
     }
-    process.stdout.write('.');
-    await sleep(2000);
+    process.stdout.write(`\r  Esperando a que Docker Desktop termine de iniciar... ${formatElapsed(Date.now() - started)}  `);
+    lastNotice = Date.now();
+    await sleep(1500);
   }
 
-  throw new Error('Docker no respondió a tiempo. Reconstruye el contenedor o reinicia el Codespace.');
+  console.log('');
+  const hint = inCodespace
+    ? 'Reconstruye el contenedor o reinicia el Codespace.'
+    : 'Abre Docker Desktop manualmente, espera a que la ballena de la barra de tareas deje de animarse y vuelve a intentar.';
+  throw new Error(`Docker no respondió a tiempo. ${hint}`);
 }
 
 function startContainers() {
-  title('5/7 · Construyendo PowerShell y encendiendo la PC');
+  title('5/7 · Descargando y encendiendo la PC');
+  console.log('  La primera vez descarga varios GB (Linux, Chromium, VS Code). Puede tardar varios minutos.');
 
+  const pullStart = Date.now();
   run('docker', ['compose', 'pull']);
+  ok(`Imágenes de Linux, Chromium, VS Code y Caddy listas (${formatElapsed(Date.now() - pullStart)}).`);
 
-  console.log('\nPreparando ANDER PowerShell con OpenCode permanente...');
+  console.log('\n  Construyendo ANDER PowerShell con OpenCode permanente...');
+  const buildStart = Date.now();
   run('docker', [
     'compose',
     'build',
     '--pull',
     'powershell',
   ]);
+  ok(`Imagen de PowerShell lista (${formatElapsed(Date.now() - buildStart)}).`);
 
+  const upStart = Date.now();
   run('docker', [
     'compose',
     'up',
@@ -252,8 +313,7 @@ function startContainers() {
     '--remove-orphans',
     '--force-recreate',
   ]);
-
-  ok('Linux, Chromium, VS Code, PowerShell y el gateway fueron iniciados.');
+  ok(`Linux, Chromium, VS Code, PowerShell y el gateway fueron iniciados (${formatElapsed(Date.now() - upStart)}).`);
 }
 
 function checkHttp(port) {
@@ -277,18 +337,21 @@ function checkHttp(port) {
 
 async function waitForPc(port, timeoutMs = 180000) {
   title('6/7 · Esperando a que la PC esté lista');
-  const deadline = Date.now() + timeoutMs;
+  const started = Date.now();
+  const deadline = started + timeoutMs;
   while (Date.now() < deadline) {
     if (await checkHttp(port)) {
-      ok('ANDER CLOUD PC está respondiendo.');
+      process.stdout.write('\r' + ' '.repeat(50) + '\r');
+      ok(`ANDER CLOUD PC está respondiendo (${formatElapsed(Date.now() - started)}).`);
       return;
     }
-    process.stdout.write('.');
-    await sleep(2500);
+    process.stdout.write(`\r  Esperando respuesta en el puerto ${port}... ${formatElapsed(Date.now() - started)}  `);
+    await sleep(2000);
   }
 
+  console.log('');
   run('docker', ['compose', 'ps'], { allowFailure: true });
-  throw new Error('La PC no respondió a tiempo. Revisa los logs con: docker compose logs -f');
+  throw new Error('La PC no respondió a tiempo. Revisa los logs con: docker compose logs -f --tail=150');
 }
 
 function publicUrl(port) {
@@ -332,7 +395,7 @@ async function main() {
   startContainers();
   await waitForPc(port);
 
-  title('7/7 · Sistema listo');
+  title(`7/7 · Sistema listo (${formatElapsed(Date.now() - START_TIME)} en total)`);
   const url = publicUrl(port);
   console.log(`\n\x1b[1mAbre ANDER CLOUD PC aquí:\x1b[0m\n\x1b[4m${url}\x1b[0m\n`);
   console.log('Servicios:');
@@ -344,14 +407,18 @@ async function main() {
 
   if (tryOpenBrowser(url)) {
     ok('Se solicitó abrir la PC en el navegador.');
-  } else {
+  } else if (process.env.CODESPACE_NAME) {
     warn('Abre el puerto 8080 desde la pestaña Puertos si no se abrió automáticamente.');
+  } else {
+    warn(`Ábrelo manualmente en tu navegador: ${url}`);
   }
 }
 
 main().catch((error) => {
+  console.log('');
   fail(error instanceof Error ? error.message : String(error));
-  console.error('\nRevisa el estado con: docker compose ps');
+  console.error(`\nEl arranque falló después de ${formatElapsed(Date.now() - START_TIME)}.`);
+  console.error('Revisa el estado con: docker compose ps');
   console.error('Revisa los logs con: docker compose logs -f --tail=150');
   process.exitCode = 1;
 });

@@ -1,0 +1,60 @@
+/* ANDER CLOUD PC · Modo tablet v8 */
+/* Sin teclado físico ni trackpad: el dispositivo pasa a ser una tablet
+   que se ajusta sola por orientación, en móvil y en PC. */
+
+.hinge,.base{display:none!important}
+
+.scene{
+  padding:16px 14px calc(16px + env(safe-area-inset-bottom))!important;
+  align-items:center!important;
+}
+
+.laptop{
+  margin:auto!important;
+  filter:drop-shadow(0 30px 60px #000a)!important;
+}
+
+.display{
+  border-radius:30px!important;
+  padding:14px 14px 26px!important;
+  background:linear-gradient(160deg,#2b3242,#0a0d14 55%,#1b202a)!important;
+}
+.display:after{
+  content:'ANDER';
+  bottom:8px!important;
+  font-size:7px!important;
+  letter-spacing:5px!important;
+}
+.display:before{
+  content:'';
+  position:absolute;
+  bottom:5px;
+  left:50%;
+  transform:translateX(-50%);
+  width:54px;
+  height:4px;
+  border-radius:999px;
+  background:#ffffff22;
+}
+
+.screen{
+  border-radius:18px!important;
+}
+
+/* Tablet en vertical: la anchura manda, sobra alto de sobra */
+@media (orientation:portrait){
+  .screen{aspect-ratio:3/4!important}
+  .laptop{width:min(94vw,calc(82vh * .75),640px)!important}
+}
+
+/* Tablet/teléfono en horizontal: el alto manda, hay poco margen vertical */
+@media (orientation:landscape){
+  .screen{aspect-ratio:4/3!important}
+  .laptop{width:min(94vw,calc(82vh * 1.3334),1400px)!important}
+}
+
+@media(max-width:760px){
+  .scene{padding:10px 8px calc(10px + env(safe-area-inset-bottom))!important}
+  .display{padding:10px 10px 22px!important;border-radius:24px!important}
+  .screen{border-radius:15px!important}
+}
