@@ -1,0 +1,47 @@
+/* ANDER CLOUD PC · Barra de tareas centrada estilo Windows 11 v10 */
+
+.task{
+  background:rgba(26,28,36,.82)!important;
+  backdrop-filter:blur(24px) saturate(1.4)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(1.4)!important;
+  border-top:1px solid rgba(255,255,255,.08)!important;
+}
+
+.task-center{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  max-width:calc(100% - 132px);
+  pointer-events:auto;
+}
+.task-center .task-apps{flex:0 1 auto!important;overflow-x:auto!important}
+
+.start{
+  border-radius:6px!important;
+  background:transparent!important;
+}
+@media(hover:hover){.start:hover{background:rgba(255,255,255,.1)!important}}
+.start:active{background:rgba(255,255,255,.16)!important}
+
+.task-device-status{
+  margin-left:auto!important;
+  background:rgba(255,255,255,.05)!important;
+  border-radius:6px!important;
+  padding:0 8px!important;
+  height:30px!important;
+}
+
+.clock{
+  margin-left:4px!important;
+  padding:0 8px!important;
+  border-radius:6px!important;
+}
+@media(hover:hover){.clock:hover{background:rgba(255,255,255,.06)!important}}
+
+@media(max-width:760px){
+  .task-center{max-width:calc(100% - 118px)}
+}

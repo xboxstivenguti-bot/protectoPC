@@ -1,0 +1,80 @@
+/* ANDER CLOUD PC · Ventanas estilo Windows 11 v9 */
+
+.os-window{
+  border:1px solid rgba(255,255,255,.14)!important;
+  border-radius:8px!important;
+  background:#1b1b1f!important;
+  box-shadow:0 22px 55px #000c!important;
+}
+.os-window.focused{
+  border-color:rgba(120,150,255,.6)!important;
+  box-shadow:0 26px 65px #000e,0 0 0 1px rgba(120,150,255,.35)!important;
+}
+
+.winbar{
+  height:33px!important;
+  background:#20222b!important;
+  border-bottom:1px solid rgba(255,255,255,.08)!important;
+  gap:8px!important;
+  padding:0 0 0 10px!important;
+  cursor:move;
+}
+.os-window.focused .winbar{background:#26283a!important}
+
+.winicon{
+  width:16px!important;
+  height:16px!important;
+  border-radius:3px!important;
+  background:transparent!important;
+}
+
+.wintitle{
+  font-family:"Segoe UI",system-ui,sans-serif!important;
+  font-weight:600!important;
+  font-size:10.5px!important;
+  color:#e8e8ee!important;
+}
+.os-window:not(.focused) .wintitle{color:#9a9aa5!important}
+
+.wincontrols{
+  gap:0!important;
+  height:100%!important;
+  align-self:stretch;
+}
+.wincontrols button{
+  width:42px!important;
+  height:100%!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:10px 10px!important;
+  font-size:0!important;
+  transition:background-color .08s;
+}
+.wincontrols button:active{background-color:rgba(255,255,255,.14)!important}
+@media(hover:hover){
+  .wincontrols button:hover{background-color:rgba(255,255,255,.12)!important}
+  .wincontrols .close:hover{background-color:#e81123!important}
+}
+.wincontrols .close:active{background-color:#c50f1f!important}
+
+.wincontrols [data-action="min"]{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Crect x='0' y='4.5' width='10' height='1' fill='white'/%3E%3C/svg%3E")!important;
+}
+.wincontrols [data-action="max"]{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Crect x='0.5' y='0.5' width='9' height='9' fill='none' stroke='white' stroke-width='1'/%3E%3C/svg%3E")!important;
+}
+.wincontrols [data-action="max"].is-maximized{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Crect x='2.5' y='0.5' width='7' height='7' fill='none' stroke='white' stroke-width='1'/%3E%3Crect x='0.5' y='2.5' width='7' height='7' fill='%2320222b' stroke='white' stroke-width='1'/%3E%3C/svg%3E")!important;
+}
+.wincontrols .close{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cline x1='0.5' y1='0.5' x2='9.5' y2='9.5' stroke='white' stroke-width='1.15'/%3E%3Cline x1='9.5' y1='0.5' x2='0.5' y2='9.5' stroke='white' stroke-width='1.15'/%3E%3C/svg%3E")!important;
+}
+
+.winbody{background:#111116!important}
+
+@media(max-width:760px){
+  .winbar{height:29px!important}
+  .wincontrols button{width:36px!important;background-size:9px 9px!important}
+}
