@@ -1,0 +1,43 @@
+/* ANDER CLOUD PC · Pantalla completa, sin espacios sobrantes v13 */
+/* Reemplaza el tamaño fijo por orientación (v8) por "llenar todo lo
+   disponible": el ancho y el alto se calculan del viewport real, no de
+   una relación de aspecto fija, para que no sobre fondo alrededor. */
+
+.scene{
+  padding:8px!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+.laptop{
+  width:calc(100vw - 16px)!important;
+  max-width:none!important;
+  height:calc(100vh - 16px)!important;
+  margin:0 auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+
+.display{
+  width:100%!important;
+  flex:1 1 auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+}
+
+.screen{
+  flex:1 1 auto!important;
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:auto!important;
+  min-height:0!important;
+}
+
+@media (orientation:portrait){.screen{aspect-ratio:auto!important}}
+@media (orientation:landscape){.screen{aspect-ratio:auto!important}}
+
+@media(max-width:760px){
+  .scene{padding:5px!important}
+  .laptop{width:calc(100vw - 10px)!important;height:calc(100vh - 10px)!important}
+}
