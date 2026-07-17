@@ -44,6 +44,7 @@ services:
       - SELKIES_UI_SIDEBAR_SHOW_TRACKPAD=true
       - SELKIES_UI_SIDEBAR_SHOW_KEYBOARD_BUTTON=true
       - SELKIES_UI_SIDEBAR_SHOW_SOFT_BUTTONS=true
+      - SELKIES_UI_SHOW_SIDEBAR=false|locked
       - SELKIES_AUDIO_ENABLED=true
       - SELKIES_MICROPHONE_ENABLED=true
       - SELKIES_CLIPBOARD_ENABLED=true
@@ -100,6 +101,7 @@ services:
       - SELKIES_UI_SIDEBAR_SHOW_TRACKPAD=true
       - SELKIES_UI_SIDEBAR_SHOW_KEYBOARD_BUTTON=true
       - SELKIES_UI_SIDEBAR_SHOW_SOFT_BUTTONS=true
+      - SELKIES_UI_SHOW_SIDEBAR=false|locked
       - SELKIES_AUDIO_ENABLED=true
       - SELKIES_MICROPHONE_ENABLED=true
       - SELKIES_CLIPBOARD_ENABLED=true
@@ -134,11 +136,11 @@ services:
         if [ -d /config/data/User/profiles ]; then
           find /config/data/User/profiles -mindepth 1 -maxdepth 1 -type d -exec cp -f /defaults/settings.json {}/settings.json \;
         fi
-        if [ ! -f /config/.ander-ultracompact-v2 ]; then
+        if [ ! -f /config/.ander-normal-v3 ]; then
           find /config/data/User/workspaceStorage -mindepth 1 -delete 2>/dev/null || true
           find /config/data/User/globalStorage -maxdepth 1 -type f -name 'storage.json' -delete 2>/dev/null || true
           find /config/data/User/globalStorage -maxdepth 1 -type f -name 'state.vscdb*' -delete 2>/dev/null || true
-          touch /config/.ander-ultracompact-v2
+          touch /config/.ander-normal-v3
         fi
         chmod -R a+rwX /config/data/User /config/data/Machine
     restart: "no"

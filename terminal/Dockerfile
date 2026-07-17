@@ -53,4 +53,4 @@ USER ander
 WORKDIR /workspace
 EXPOSE 7681
 
-CMD ["ttyd", "-W", "-p", "7681", "pwsh", "-NoLogo", "-NoExit"]
+CMD ["ttyd", "-W", "-t", "disableLeaveAlert=true", "-p", "7681", "pwsh", "-NoLogo", "-NoExit"]
