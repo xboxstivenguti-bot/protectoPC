@@ -1,7 +1,8 @@
 /* ANDER CLOUD PC · Pantalla completa, sin espacios sobrantes v13 */
-/* Reemplaza el tamaño fijo por orientación (v8) por "llenar todo lo
-   disponible": el ancho y el alto se calculan del viewport real, no de
-   una relación de aspecto fija, para que no sobre fondo alrededor. */
+/* El ancho y el alto se fijan directo desde el viewport real en cada
+   capa (laptop → display → screen) con position:absolute + inset, en
+   vez de depender de una cadena de flexbox anidada que podía terminar
+   encogiendo la pantalla en vez de llenarla. */
 
 .scene{
   padding:8px!important;
@@ -10,34 +11,30 @@
 }
 
 .laptop{
+  position:relative!important;
   width:calc(100vw - 16px)!important;
   max-width:none!important;
   height:calc(100vh - 16px)!important;
   margin:0 auto!important;
-  display:flex!important;
-  flex-direction:column!important;
 }
 
 .display{
-  width:100%!important;
-  flex:1 1 auto!important;
-  display:flex!important;
-  flex-direction:column!important;
-  min-height:0!important;
+  position:absolute!important;
+  inset:0!important;
+  width:auto!important;
+  height:auto!important;
 }
 
 .screen{
-  flex:1 1 auto!important;
-  width:100%!important;
+  position:absolute!important;
+  inset:14px 14px 26px!important;
+  width:auto!important;
   height:auto!important;
   aspect-ratio:auto!important;
-  min-height:0!important;
 }
-
-@media (orientation:portrait){.screen{aspect-ratio:auto!important}}
-@media (orientation:landscape){.screen{aspect-ratio:auto!important}}
 
 @media(max-width:760px){
   .scene{padding:5px!important}
   .laptop{width:calc(100vw - 10px)!important;height:calc(100vh - 10px)!important}
+  .screen{inset:10px 10px 22px!important}
 }

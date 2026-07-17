@@ -12,7 +12,9 @@
     const wasOpen=[...windows.values()].some(rec=>rec.appId===appId&&!rec.closed);
     previousOpenApp(appId);
     if(wasOpen)return;
-    const rec=[...windows.values()].find(item=>item.appId===appId&&!item.closed);
-    if(rec)applySnap(rec.id,'max');
+    requestAnimationFrame(()=>{
+      const rec=[...windows.values()].find(item=>item.appId===appId&&!item.closed);
+      if(rec)applySnap(rec.id,'max');
+    });
   };
 })();
