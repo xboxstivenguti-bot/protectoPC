@@ -31,9 +31,46 @@ services:
       - ./.git:/repo/.git:ro
     restart: unless-stopped
 
+  linux-clean:
+    image: alpine:3.21
+    container_name: ander-linux-clean
+    volumes:
+      - ./data/linux:/config
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        mkdir -p /config/.config/xfce4/xfconf/xfce-perchannel-xml /config/.config/autostart
+        PANEL_XML=/config/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+        if [ ! -f "$$PANEL_XML" ]; then
+          {
+            echo '<?xml version="1.1" encoding="UTF-8"?>'
+            echo ''
+            echo '<channel name="xfce4-panel" version="1.0">'
+            echo '  <property name="configver" type="int" value="2"/>'
+            echo '  <property name="panels" type="empty"/>'
+            echo '</channel>'
+          } > "$$PANEL_XML"
+        fi
+        {
+          echo '[Desktop Entry]'
+          echo 'Type=Application'
+          echo 'Name=ANDER Hide Panel'
+          echo 'Comment=Oculta el panel de XFCE porque ya existe la barra de tareas de ANDER'
+          echo 'Exec=sh -c "sleep 3 && pkill -f xfce4-panel"'
+          echo 'X-GNOME-Autostart-enabled=true'
+          echo 'NoDisplay=true'
+        } > /config/.config/autostart/ander-hide-panel.desktop
+        chown -R ${PUID:-1000}:${PGID:-1000} /config/.config/xfce4 /config/.config/autostart 2>/dev/null || true
+    restart: "no"
+
   linux:
     image: lscr.io/linuxserver/webtop:debian-xfce
     container_name: ander-linux
+    depends_on:
+      linux-clean:
+        condition: service_completed_successfully
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
